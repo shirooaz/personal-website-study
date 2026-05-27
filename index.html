@@ -1,11 +1,220 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>153904.xyz</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>153904.xyz — 构成主义</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Hello World 喵~</h1>
-    <p>秋枫清澄的第一个网站！</p>
+
+<!-- ====== 四角几何装饰 ====== -->
+<div class="corner-deco corner-tl">
+  <svg viewBox="0 0 120 120"><polygon points="0,0 120,0 0,120" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="15" cy="15" r="4"/></svg>
+</div>
+<div class="corner-deco corner-tr">
+  <svg viewBox="0 0 120 120"><polygon points="120,0 120,120 0,0" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="105" cy="15" r="4"/></svg>
+</div>
+<div class="corner-deco corner-bl">
+  <svg viewBox="0 0 120 120"><polygon points="0,120 120,120 0,0" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="15" cy="105" r="4"/></svg>
+</div>
+<div class="corner-deco corner-br">
+  <svg viewBox="0 0 120 120"><polygon points="120,120 0,120 120,0" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="105" cy="105" r="4"/></svg>
+</div>
+
+<!-- ====== 斜线装饰 ====== -->
+<div class="diagonal-line dl-1"></div>
+<div class="diagonal-line dl-2"></div>
+<div class="diagonal-line dl-3"></div>
+<div class="diagonal-line dl-4"></div>
+
+<!-- ====== 顶部栏 ====== -->
+<header class="top-bar">
+  <div class="site-title">
+    <span class="tit-char t1">秋</span><span class="tit-char t2">枫</span><span class="tit-char t3">清</span><span class="tit-char t4">澄</span>
+  </div>
+  <div class="clock-wrap" id="clockWrap">
+    <div class="clock-label-wrap">
+      <span class="clock-label" id="clockLabel" title="点击切换秒数 | 双击同步时间">当前时间</span>
+    </div>
+    <span class="clock-display" id="clock">00:00:00</span>
+  </div>
+  <nav class="top-nav">
+    <a href="#" class="nav-item active">首页</a>
+    <a href="#" class="nav-item">博客</a>
+    <a href="#" class="nav-item">关于</a>
+  </nav>
+</header>
+
+<!-- ====== 左侧栏：博客 ====== -->
+<aside class="side-panel left-panel">
+  <div class="panel-header">
+    <span class="panel-icon">◇</span>
+    <span class="panel-title">博客</span>
+    <span class="panel-sub">BLOG</span>
+  </div>
+  <div class="blog-list" id="blogList"></div>
+</aside>
+
+<!-- ====== 左侧栏：留空框体 ====== -->
+<aside class="side-panel empty-panel">
+  <div class="avatar-wrap">
+    <div class="avatar"></div>
+  </div>
+  <div class="panel-links">
+    <div class="panel-link-item"></div>
+    <div class="panel-link-item"></div>
+    <div class="panel-link-item"></div>
+    <div class="panel-link-item"></div>
+  </div>
+</aside>
+
+<!-- ====== 中央：构成主义插画 ====== -->
+<main class="center-art">
+  <svg viewBox="0 0 600 600" class="constructivist-svg" id="mainArt">
+    <!-- 背景网格线 -->
+    <defs>
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+      </pattern>
+      <radialGradient id="redGlow">
+        <stop offset="0%" stop-color="#e63946" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#e63946" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="diagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ff6b9d"/>
+        <stop offset="100%" stop-color="#e63946"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 网格 -->
+    <rect width="600" height="600" fill="url(#grid)"/>
+
+    <!-- 大红色圆 — 构成主义核心元素 -->
+    <circle cx="310" cy="270" r="155" fill="url(#redGlow)" class="art-pulse"/>
+    <circle cx="310" cy="270" r="150" fill="none" stroke="#e63946" stroke-width="2.5" opacity="0.8" class="art-rotate-slow"/>
+    <circle cx="310" cy="270" r="140" fill="none" stroke="#e63946" stroke-width="1" opacity="0.4" stroke-dasharray="30 15" class="art-rotate-rev"/>
+
+    <!-- 黑色斜向矩形 — 构成主义标志性元素 -->
+    <g transform="rotate(22 310 270)" opacity="0.9">
+      <rect x="270" y="80" width="80" height="380" fill="#0a0a0f" stroke="#f0f0f0" stroke-width="1"/>
+      <rect x="280" y="100" width="60" height="180" fill="#e63946" opacity="0.7"/>
+    </g>
+
+    <!-- 白色三角形 -->
+    <polygon points="310,60 480,330 140,330" fill="none" stroke="#f0f0f0" stroke-width="1.5" opacity="0.6" class="art-float"/>
+
+    <!-- 金色小圆 -->
+    <circle cx="460" cy="400" r="28" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.7" class="art-float-delay"/>
+    <circle cx="460" cy="400" r="18" fill="#ffd700" opacity="0.1"/>
+
+    <!-- 斜线交叉 -->
+    <line x1="20" y1="20"  x2="580" y2="580" stroke="#f0f0f0" stroke-width="0.5" opacity="0.2"/>
+    <line x1="580" y1="20"  x2="20"  y2="580" stroke="#f0f0f0" stroke-width="0.5" opacity="0.2"/>
+    <line x1="300" y1="0"   x2="300" y2="600" stroke="#f0f0f0" stroke-width="0.3" opacity="0.15"/>
+    <line x1="0"   y1="300" x2="600" y2="300" stroke="#f0f0f0" stroke-width="0.3" opacity="0.15"/>
+
+    <!-- 交叉点圆点 -->
+    <circle cx="300" cy="300" r="5" fill="#e63946" class="art-pulse"/>
+    <circle cx="310" cy="270" r="3" fill="#f0f0f0"/>
+
+    <!-- 小几何方块群 -->
+    <rect x="130" y="420" width="16" height="16" fill="none" stroke="#ff6b9d" stroke-width="1" opacity="0.6" class="art-float-delay"/>
+    <rect x="155" y="430" width="12" height="12" fill="#ff6b9d" opacity="0.3" class="art-float"/>
+    <rect x="440" y="150" width="14" height="14" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.5" class="art-float-delay"/>
+    <rect x="460" y="170" width="10" height="10" fill="#ffd700" opacity="0.2" class="art-float"/>
+
+    <!-- 构成主义文字 -->
+    <text x="310" y="530" text-anchor="middle" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="64" font-weight="900" fill="#f0f0f0" opacity="0.04" letter-spacing="20">构成主义</text>
+
+    <!-- 下方刻度线 -->
+    <g opacity="0.25">
+      <line x1="80"  y1="550" x2="130" y2="550" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="160" y1="550" x2="190" y2="550" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="220" y1="550" x2="250" y2="550" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="350" y1="550" x2="380" y2="550" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="410" y1="550" x2="440" y2="550" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="470" y1="550" x2="520" y2="550" stroke="#f0f0f0" stroke-width="2"/>
+    </g>
+
+    <!-- 上方刻度线 -->
+    <g opacity="0.25">
+      <line x1="80"  y1="50" x2="130" y2="50" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="160" y1="50" x2="190" y2="50" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="220" y1="50" x2="250" y2="50" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="350" y1="50" x2="380" y2="50" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="410" y1="50" x2="440" y2="50" stroke="#f0f0f0" stroke-width="2"/>
+      <line x1="470" y1="50" x2="520" y2="50" stroke="#f0f0f0" stroke-width="2"/>
+    </g>
+  </svg>
+
+  <!-- 插图切换按钮 -->
+  <div class="art-controls">
+    <button class="art-btn active" data-variant="0" title="构成 I">●</button>
+    <button class="art-btn" data-variant="1" title="构成 II">◆</button>
+    <button class="art-btn" data-variant="2" title="构成 III">■</button>
+  </div>
+</main>
+
+<!-- ====== 底部栏：留言板 ====== -->
+<footer class="bottom-bar">
+  <div class="guestbook" id="guestbook">
+    <div class="gb-header">
+      <span class="panel-icon">◇</span>
+      <span class="gb-title">留言板</span>
+      <span class="panel-sub">GUESTBOOK</span>
+    </div>
+    <form class="gb-form" id="gbForm">
+      <div class="gb-form-row">
+        <textarea class="gb-textarea" id="gbMessage" placeholder="写下想说的话…" maxlength="500" required></textarea>
+        <div class="gb-form-right">
+          <input type="text" class="gb-input" id="gbName" placeholder="昵称" maxlength="20" required>
+          <input type="text" class="gb-input" id="gbEmail" placeholder="email (不会展示)" maxlength="50">
+          <button type="submit" class="gb-submit">发 送</button>
+        </div>
+        <div class="gb-messages" id="gbMessages"></div>
+      </div>
+      <div class="gb-row gb-actions">
+        <span class="gb-hint">※ 留言存储在浏览器本地，仅用于演示。上线后可接入 Giscus。</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="bottom-index">
+    <div class="panel-header">
+      <span class="panel-icon">◇</span>
+      <span class="panel-title">索引</span>
+      <span class="panel-sub">LINKS</span>
+    </div>
+    <div class="link-groups">
+      <div class="link-group">
+        <div class="link-cat">常用</div>
+        <a href="https://github.com" target="_blank" rel="noopener" class="link-item">GitHub</a>
+        <a href="https://www.google.com" target="_blank" rel="noopener" class="link-item">Google</a>
+        <a href="https://www.youtube.com" target="_blank" rel="noopener" class="link-item">YouTube</a>
+      </div>
+      <div class="link-group">
+        <div class="link-cat">开发</div>
+        <a href="https://developer.mozilla.org" target="_blank" rel="noopener" class="link-item">MDN</a>
+        <a href="https://stackoverflow.com" target="_blank" rel="noopener" class="link-item">Stack Overflow</a>
+        <a href="https://dash.cloudflare.com" target="_blank" rel="noopener" class="link-item">Cloudflare</a>
+      </div>
+      <div class="link-group">
+        <div class="link-cat">ACG</div>
+        <a href="https://www.bilibili.com" target="_blank" rel="noopener" class="link-item">bilibili</a>
+        <a href="https://bgm.tv" target="_blank" rel="noopener" class="link-item">Bangumi</a>
+        <a href="https://www.pixiv.net" target="_blank" rel="noopener" class="link-item">pixiv</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <span>© 2026 153904.xyz</span>
+    <span class="footer-sep">|</span>
+    <span>Powered by Cloudflare Pages</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
