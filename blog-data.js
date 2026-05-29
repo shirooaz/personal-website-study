@@ -4,6 +4,40 @@
 
 const blogPosts = [
   {
+    id: 'blog-guestbook-launch',
+    date: '2026-05-29',
+    title: '博客 & 留言板上线 — Worker + KV 实战//开发日志',
+    excerpt: '一天之内完成了博客系统、留言板后端和多项 UI 改进。从零到全功能个人站点。',
+    content: `
+<p>用 Cloudflare Worker + KV 实现了留言板后端，替代了原来的浏览器本地存储。同时创建了独立博客页面和共享数据文件，主页右侧博客面板和 /blog 页面读取同一份数据。</p>
+
+<h3>新增文件（4个）</h3>
+<ul>
+  <li><strong>workers/guestbook/src/index.js</strong> — 留言板 API（GET 读取、POST 写入、DELETE 删除，含限流和 XSS 防护）</li>
+  <li><strong>workers/guestbook/wrangler.toml</strong> — Worker 配置（绑定 KV、自定义域名路由）</li>
+  <li><strong>blog.html</strong> — 独立博客页面（点击标题展开/收起，文章间分享链接）</li>
+  <li><strong>blog-data.js</strong> — 博客文章数据（增删改文章只需编辑这个文件）</li>
+</ul>
+
+<h3>修改文件（4个）</h3>
+<ul>
+  <li><strong>script.js</strong> — 留言板从 localStorage 改为调用 KV API；博客面板和数据共用 blog-data.js</li>
+  <li><strong>index.html</strong> — 导航链接指向 blog.html；引入 blog-data.js；留言板提示更新</li>
+  <li><strong>style.css</strong> — 新增博客页布局、文章展开收起、留言空态样式</li>
+  <li><strong>.gitignore</strong> — 排除 .wrangler 缓存、截图、测试目录</li>
+</ul>
+
+<h3>部署流程</h3>
+<ol>
+  <li><code>wrangler login</code> 登录</li>
+  <li><code>wrangler kv namespace create "GUESTBOOK_KV"</code> 创建 KV，把 id 填入 wrangler.toml</li>
+  <li><code>wrangler deploy</code> 部署 Worker，路由 api.153904.xyz/* 自动绑定</li>
+  <li>更新 script.js 的 API 地址为 <code>https://api.153904.xyz/api/messages</code></li>
+  <li><code>git add</code> + <code>commit</code> + <code>push</code>，Cloudflare Pages 自动部署前端</li>
+</ol>
+    `.trim(),
+  },
+  {
     id: 'hello-world',
     date: '2026-05-20',
     title: 'Hello World — 站点上线',
