@@ -11,3 +11,7 @@ ALLOWED_ORIGIN = "https://153904.xyz"
 
 [observability]
 enabled = true
+
+[[routes]]
+pattern = "api.153904.xyz/*"
+zone_name = "153904.xyz"
