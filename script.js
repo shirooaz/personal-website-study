@@ -2,7 +2,27 @@
    构成主义 × 二次元 — JavaScript
    ============================================ */
 
-// ----- 时钟 -----
+// ========== 配置 ==========
+const CONFIG = {
+  // 部署 Worker 后替换为实际地址，例如:
+  // https://guestbook-api.你的用户名.workers.dev/api/messages
+  guestbookApi: 'https://api.153904.xyz/api/messages',
+};
+
+// ========== 工具函数 ==========
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function formatTime(iso) {
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// ========== 时钟 ==========
 (function clock() {
   const el = document.getElementById('clock');
   const label = document.getElementById('clockLabel');
@@ -11,18 +31,16 @@
   let showSeconds = true;
   let timeOffset = 0;
 
-  function formatTime(date) {
-    const h = String(date.getHours()).padStart(2, '0');
-    const m = String(date.getMinutes()).padStart(2, '0');
-    if (showSeconds) {
-      const s = String(date.getSeconds()).padStart(2, '0');
-      return `${h}:${m}:${s}`;
-    }
-    return `${h}:${m}`;
-  }
-
   function tick() {
-    el.textContent = formatTime(new Date(Date.now() + timeOffset));
+    const d = new Date(Date.now() + timeOffset);
+    const h = String(d.getHours()).padStart(2, '0');
+    const m = String(d.getMinutes()).padStart(2, '0');
+    if (showSeconds) {
+      const s = String(d.getSeconds()).padStart(2, '0');
+      el.textContent = `${h}:${m}:${s}`;
+    } else {
+      el.textContent = `${h}:${m}`;
+    }
   }
 
   tick();
@@ -59,99 +77,154 @@
   }
 })();
 
-// ----- 博客数据 -----
+// ========== 博客渲染 ==========
 (function blog() {
   const list = document.getElementById('blogList');
-  if (!list) return;
+  if (!list || typeof blogPosts === 'undefined') return;
 
-  const posts = [];
-
-  list.innerHTML = posts.map(p => `
-    <div class="blog-card" data-id="${p.id}">
+  list.innerHTML = blogPosts.map((p) => `
+    <a href="blog.html#${p.id}" class="blog-card" data-id="${p.id}">
       <div class="blog-date">${p.date}</div>
       <div class="blog-title">${p.title}</div>
       <div class="blog-excerpt">${p.excerpt}</div>
-    </div>
+    </a>
   `).join('');
 
-  // 点击博客卡片展开/收起摘要
-  list.addEventListener('click', function(e) {
+  // 点击跳转博客页
+  list.addEventListener('click', function (e) {
     const card = e.target.closest('.blog-card');
     if (!card) return;
-    card.classList.toggle('expanded');
+    // <a> 标签自带跳转，无需额外处理
   });
 })();
 
-// ----- 留言板 (localStorage) -----
+// ========== 博客页面渲染 ==========
+(function blogPage() {
+  const postList = document.getElementById('blogPostList');
+  if (!postList || typeof blogPosts === 'undefined') return;
+
+  const hash = window.location.hash.slice(1);
+
+  postList.innerHTML = blogPosts.map((p) => `
+    <article class="blog-post ${hash === p.id ? 'blog-post--open' : ''}" id="${p.id}">
+      <div class="blog-post-header">
+        <time class="blog-post-date">${p.date}</time>
+        <h2 class="blog-post-title">${p.title}</h2>
+      </div>
+      <div class="blog-post-body">${p.content}</div>
+    </article>
+  `).join('');
+
+  // 点击标题展开/收起
+  postList.addEventListener('click', function (e) {
+    const header = e.target.closest('.blog-post-header');
+    if (!header) return;
+    const post = header.closest('.blog-post');
+    post.classList.toggle('blog-post--open');
+    // 更新 URL hash
+    if (post.classList.contains('blog-post--open')) {
+      history.replaceState(null, '', '#' + post.id);
+    } else {
+      history.replaceState(null, '', window.location.pathname);
+    }
+  });
+
+  // 如果 URL 带 hash，滚动到对应文章
+  if (hash) {
+    const target = document.getElementById(hash);
+    if (target) {
+      setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+  }
+})();
+
+// ========== 留言板 (Cloudflare KV API) ==========
 (function guestbook() {
   const form = document.getElementById('gbForm');
   const msgContainer = document.getElementById('gbMessages');
+  const hintEl = document.querySelector('.gb-hint');
   if (!form || !msgContainer) return;
 
-  const STORAGE_KEY = 'gb_messages_153904';
-  localStorage.removeItem(STORAGE_KEY); // 清空留言
+  const apiUrl = CONFIG.guestbookApi;
 
-  function loadMessages() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    } catch { return []; }
-  }
-
-  function saveMessages(msgs) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs));
-  }
-
-  function render() {
-    const msgs = loadMessages();
-    if (msgs.length === 0) {
-      msgContainer.innerHTML = '';
+  function render(msgs) {
+    if (!msgs || msgs.length === 0) {
+      msgContainer.innerHTML = '<div class="gb-empty">暂无留言，来写第一条吧 ~</div>';
       return;
     }
-    msgContainer.innerHTML = msgs.slice(-20).map(m => `
+    msgContainer.innerHTML = msgs.slice(-30).reverse().map((m) => `
       <div class="gb-msg">
-        <span class="gb-msg-time">${m.time}</span>
-        <span class="gb-msg-name">${esc(m.name)}</span>
-        <span class="gb-msg-body">${esc(m.body)}</span>
+        <span class="gb-msg-time">${formatTime(m.time)}</span>
+        <span class="gb-msg-name">${escHtml(m.name)}</span>
+        <span class="gb-msg-body">${escHtml(m.body)}</span>
       </div>
     `).join('');
+    msgContainer.scrollTop = 0;
   }
 
-  function esc(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
+  async function loadMessages() {
+    try {
+      const resp = await fetch(apiUrl);
+      if (!resp.ok) throw new Error('API error');
+      const data = await resp.json();
+      render(Array.isArray(data) ? data : data.messages || []);
+      if (hintEl) hintEl.textContent = '※ 留言存储在 Cloudflare KV，全站实时同步';
+    } catch (err) {
+      console.warn('留言加载失败:', err);
+      if (hintEl) hintEl.textContent = '※ 留言加载失败，请检查 API 配置';
+    }
   }
 
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', async function (e) {
     e.preventDefault();
-    const name = document.getElementById('gbName').value.trim();
-    const body = document.getElementById('gbMessage').value.trim();
+    const nameInput = document.getElementById('gbName');
+    const msgInput = document.getElementById('gbMessage');
+    const submitBtn = form.querySelector('.gb-submit');
+
+    const name = nameInput.value.trim();
+    const body = msgInput.value.trim();
     if (!name || !body) return;
 
-    const msgs = loadMessages();
-    const now = new Date();
-    const time = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '发送中…';
 
-    msgs.push({ name, body, time });
-    // 最多保留 50 条
-    if (msgs.length > 50) msgs.splice(0, msgs.length - 50);
-    saveMessages(msgs);
-    render();
+    try {
+      const resp = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, body }),
+      });
 
-    document.getElementById('gbName').value = '';
-    document.getElementById('gbMessage').value = '';
-    document.getElementById('gbEmail').value = '';
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        alert(data.error || '发送失败');
+        return;
+      }
+
+      // 使用 API 返回的最新消息列表渲染
+      render(data.messages || []);
+      nameInput.value = '';
+      msgInput.value = '';
+      document.getElementById('gbEmail').value = '';
+    } catch (err) {
+      alert('网络错误，请稍后重试');
+      console.warn('留言发送失败:', err);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '发 送';
+    }
   });
 
-  render();
+  // 初始加载
+  loadMessages();
 })();
 
-// ----- 插图切换 -----
+// ========== 插图切换 ==========
 (function artSwitch() {
   const btns = document.querySelectorAll('.art-btn');
   if (!btns.length) return;
 
-  // 三套不同配色的构成主义插画
   const variants = {
     red: {
       circleStroke: '#e63946',
@@ -174,56 +247,44 @@
   };
   const keys = Object.keys(variants);
 
-  btns.forEach(btn => {
-    btn.addEventListener('click', function() {
+  btns.forEach((btn) => {
+    btn.addEventListener('click', function () {
       const idx = parseInt(this.dataset.variant);
       const variant = variants[keys[idx]];
       if (!variant) return;
 
-      // 切换按钮状态
-      btns.forEach(b => b.classList.remove('active'));
+      btns.forEach((b) => b.classList.remove('active'));
       this.classList.add('active');
 
-      // 修改 SVG 中对应元素的颜色
-          const svg = document.getElementById('mainArt');
+      const svg = document.getElementById('mainArt');
       if (!svg) return;
 
-      // 红色圆
       const circles = svg.querySelectorAll('circle[stroke="#e63946"], circle[stroke="#00d4ff"], circle[stroke="#ffd700"]');
-      circles.forEach(c => {
+      circles.forEach((c) => {
         if (c.getAttribute('fill') === 'none' || c.getAttribute('fill')?.startsWith('url')) {
           c.setAttribute('stroke', variant.circleStroke);
         }
       });
 
-      // 发光渐变
       const glow = svg.querySelector('#redGlow');
       if (glow) {
-        glow.querySelectorAll('stop').forEach(stop => {
+        glow.querySelectorAll('stop').forEach((stop) => {
           stop.setAttribute('stop-color', variant.glowColor);
         });
       }
 
-      // 红色填充矩形
       const fillRects = svg.querySelectorAll('rect[fill="#e63946"], rect[fill="#00d4ff"], rect[fill="#ffd700"]');
-      fillRects.forEach(r => {
+      fillRects.forEach((r) => {
         r.setAttribute('fill', variant.accentFill);
         r.setAttribute('opacity', variant.accentOpacity);
       });
 
-      // 红色描边矩形
       const strokeRects = svg.querySelectorAll('rect[stroke="#e63946"], rect[stroke="#00d4ff"], rect[stroke="#ffd700"]');
-      strokeRects.forEach(r => r.setAttribute('stroke', variant.accentFill));
+      strokeRects.forEach((r) => r.setAttribute('stroke', variant.accentFill));
 
-      // 红色填充的形状
-      const fillPolys = svg.querySelectorAll('circle[fill="#e63946"], circle[fill="#00d4ff"], circle[fill="#ffd700"]');
-      fillPolys.forEach(c => c.setAttribute('fill', variant.accentFill));
+      const fillCircles = svg.querySelectorAll('circle[fill="#e63946"], circle[fill="#00d4ff"], circle[fill="#ffd700"]');
+      fillCircles.forEach((c) => c.setAttribute('fill', variant.accentFill));
 
-      // 红色 pulse 圆点
-      const redDots = svg.querySelectorAll('circle[fill="#e63946"].art-pulse, circle[fill="#00d4ff"].art-pulse, circle[fill="#ffd700"].art-pulse');
-      redDots.forEach(c => c.setAttribute('fill', variant.accentFill));
-
-      // 更新 drop-shadow
       svg.style.filter = `drop-shadow(0 0 60px ${variant.glowColor}22)`;
     });
   });

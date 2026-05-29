@@ -1,0 +1,13 @@
+name = "guestbook-api"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "GUESTBOOK_KV"
+id = "b771e3e02029413aad066a86f59ed4e7"
+
+[vars]
+ALLOWED_ORIGIN = "https://153904.xyz"
+
+[observability]
+enabled = true
