@@ -261,31 +261,39 @@ function formatTime(iso) {
 
       const circles = svg.querySelectorAll('circle[stroke="#e63946"], circle[stroke="#00d4ff"], circle[stroke="#ffd700"]');
       circles.forEach((c) => {
-        if (c.getAttribute('fill') === 'none' || c.getAttribute('fill')?.startsWith('url')) {
-          c.setAttribute('stroke', variant.circleStroke);
-        }
+        c.setAttribute('stroke', variant.circleStroke);
       });
 
-      const glow = svg.querySelector('#redGlow');
-      if (glow) {
-        glow.querySelectorAll('stop').forEach((stop) => {
-          stop.setAttribute('stop-color', variant.glowColor);
-        });
+      // 更新强调色矩形
+      const redRects = svg.querySelectorAll('rect[fill="#e63946"]');
+      redRects.forEach((r) => {
+        r.setAttribute('fill', variant.accentFill);
+      });
+
+      // 更新金色小圆
+      const goldFills = svg.querySelectorAll('circle[fill="#ffd700"]');
+      goldFills.forEach((cf) => {
+        cf.setAttribute('fill', variant.circleStroke);
+      });
+
+      // 更新辉光渐变
+      const glowStop = svg.querySelector('#redGlow stop');
+      if (glowStop) {
+        glowStop.setAttribute('stop-color', variant.glowColor);
       }
 
-      const fillRects = svg.querySelectorAll('rect[fill="#e63946"], rect[fill="#00d4ff"], rect[fill="#ffd700"]');
-      fillRects.forEach((r) => {
-        r.setAttribute('fill', variant.accentFill);
-        r.setAttribute('opacity', variant.accentOpacity);
+      // 更新金色边框小方块
+      const goldStrokes = svg.querySelectorAll('rect[stroke="#ffd700"]');
+      goldStrokes.forEach((rs) => {
+        rs.setAttribute('stroke', variant.circleStroke);
       });
 
-      const strokeRects = svg.querySelectorAll('rect[stroke="#e63946"], rect[stroke="#00d4ff"], rect[stroke="#ffd700"]');
-      strokeRects.forEach((r) => r.setAttribute('stroke', variant.accentFill));
-
-      const fillCircles = svg.querySelectorAll('circle[fill="#e63946"], circle[fill="#00d4ff"], circle[fill="#ffd700"]');
-      fillCircles.forEach((c) => c.setAttribute('fill', variant.accentFill));
-
-      svg.style.filter = `drop-shadow(0 0 60px ${variant.glowColor}22)`;
+      // 更新红色填充方块
+      const pinkFills = svg.querySelectorAll('rect[fill="#ff6b9d"]');
+      pinkFills.forEach((rp) => {
+        rp.setAttribute('fill', variant.accentFill);
+        rp.setAttribute('opacity', variant.accentOpacity);
+      });
     });
   });
 })();
