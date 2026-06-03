@@ -107,6 +107,7 @@ body {
   align-items: center;
   justify-content: space-between;
   height: var(--top-height);
+  flex-shrink: 0;
   padding: 0 28px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
