@@ -484,7 +484,7 @@ function displayMessages(messages) {
                 <span class="message-author">${escapeHtml(msg.name || '匿名')}</span>
                 <span class="message-time">${formatTime(msg.created_at || msg.time)}</span>
             </div>
-            <div class="message-body">${escapeHtml(msg.content || msg.message || '')}</div>
+            <div class="message-body">${escapeHtml(msg.body || msg.message || '')}</div>
         </div>
     `).join('');
 }
@@ -508,7 +508,7 @@ function loadLocalMessages() {
                 <span class="message-author">${escapeHtml(msg.name || '匿名')}</span>
                 <span class="message-time">${formatTime(msg.time)}</span>
             </div>
-            <div class="message-body">${escapeHtml(msg.message || msg.content || '')}</div>
+            <div class="message-body">${escapeHtml(msg.message || msg.body || '')}</div>
         </div>
     `).join('');
 }
