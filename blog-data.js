@@ -4,9 +4,56 @@
 
 const blogPosts = [
   {
+    id: 'site-v2-refactor',
+    date: '2026-06-13',
+    title: '完成页面重构，秋枫清澄小站2.0上线',
+    excerpt: '历时数日的页面重构圆满完成，全站架构全面升级，博客系统正式整合到首页。',
+    content: `
+<p>经过数天的努力，秋枫清澄小站完成了从初代到 2.0 的全面重构。这次升级不仅是页面的美化，更是架构层面的重新设计。</p>
+
+<h3>本次重构主要内容</h3>
+
+<h4>1. 博客系统整合</h4>
+<ul>
+  <li>将独立博客页面 <code>blog.html</code> 的内容整合到首页 <code>index.html</code></li>
+  <li>复用初代 <code>blog-data.js</code> 数据文件，统一管理博客文章</li>
+  <li>新增模态框展示完整文章内容，点击卡片即可阅读</li>
+  <li>支持 ESC 键和点击背景关闭模态框</li>
+</ul>
+
+<h4>2. 文章系统搭建</h4>
+<ul>
+  <li>创建独立的文章详情页 <code>article.html</code></li>
+  <li>设计完整文章页面架构，支持代码高亮、引用、列表等格式</li>
+  <li>添加上一篇/下一篇导航功能</li>
+</ul>
+
+<h4>3. 样式与交互优化</h4>
+<ul>
+  <li>修复多处 CSS 布局问题（posts-section padding 调整）</li>
+  <li>优化响应式设计，确保各设备显示一致</li>
+  <li>统一全站配色与视觉风格</li>
+</ul>
+
+<h3>技术亮点</h3>
+<ul>
+  <li><strong>数据集中管理：</strong>博客文章统一在 <code>blog-data.js</code> 管理，增删改只需编辑一个文件</li>
+  <li><strong>模态框交互：</strong>点击卡片弹出模态框，无需跳转页面</li>
+  <li><strong>样式继承：</strong>复用现有 CSS 变量和设计语言，保持风格统一</li>
+</ul>
+
+<h3>下一步计划</h3>
+<p>目前已清空示例文章，等待落笔（。后续将逐步完善文章系统，添加更多实用功能。</p>
+
+<hr>
+
+<p><em>特别感谢这几天一直打磨代码的我，每一处细节的调整都是为了眼睛更舒服（雾  </em></p>
+    `.trim(),
+  },
+  {
     id: 'blog-guestbook-launch',
     date: '2026-05-29',
-    title: '博客 & 留言板上线 — Worker + KV 实战//开发日志',
+    title: '博客 & 留言板上线 — Worker + KV 实战开发日志',
     excerpt: '一天之内完成了博客系统、留言板后端和多项 UI 改进。从零到全功能个人站点。',
     content: `
 <p>用 Cloudflare Worker + KV 实现了留言板后端，替代了原来的浏览器本地存储。同时创建了独立博客页面和共享数据文件，主页右侧博客面板和 /blog 页面读取同一份数据。</p>
@@ -38,28 +85,28 @@ const blogPosts = [
     `.trim(),
   },
   {
-    id: 'hello-world',
-    date: '2026-05-20',
-    title: 'Hello World — 站点上线',
-    excerpt: '153904.xyz 正式上线。聊聊这个站的技术选型和设计思路。',
+    id: 'image-hosting-setup',
+    date: '2026-05-28',
+    title: 'CloudFlare-ImgBed 图床搭建',
+    excerpt: '用 R2 + KV + Worker 搭建私有图床的完整过程，踩坑记录。',
     content: `
-<p>经过几天的折腾，<strong>153904.xyz</strong> 终于上线了。</p>
+<p><a href="https://github.com/MarSeventh/CloudFlare-ImgBed" target="_blank" rel="noopener">CloudFlare-ImgBed</a> 是一款基于 Cloudflare 的开源图床工具。</p>
 
-<h3>技术栈</h3>
-<ul>
-  <li><strong>托管：</strong>Cloudflare Pages — 免费、全球 CDN、自动部署</li>
-  <li><strong>图床：</strong>Cloudflare R2 + KV — 对象存储，配合 CloudFlare-ImgBed 使用</li>
-  <li><strong>域名：</strong>153904.xyz — 便宜好记</li>
-  <li><strong>风格：</strong>构成主义 + 二次元 — 几何线条 + 红黑配色</li>
-</ul>
+<h3>搭建步骤</h3>
+<ol>
+  <li>Fork 项目到自己的 GitHub</li>
+  <li>在 Cloudflare 控制台创建 R2 存储桶和 KV 命名空间</li>
+  <li>修改 <code>wrangler.toml</code> 绑定自己的 R2 和 KV</li>
+  <li><code>wrangler deploy</code> 部署 Worker</li>
+  <li>配置自定义域名指向 Worker</li>
+</ol>
 
-<h3>为什么选这个技术栈</h3>
-<p>作为 Web 开发初学者，Cloudflare 的免费额度非常友好。Pages 直接连 GitHub 仓库，push 即部署。R2 有 10GB 免费存储，配合 Worker 做图床 API，比直接用 GitHub 存图片灵活很多。</p>
-
-<h3>后续计划</h3>
-<p>博客和留言板功能正在开发中，会用 Worker + KV 实现。目标是做成一个轻量但有完整功能的个人站点。</p>
+<h3>踩坑记录</h3>
+<p><strong>坑 1：</strong>CORS 配置。图床 Worker 默认可能不允许跨域请求，需要在前端页面和图床不在同一域名时手动添加 CORS 头。</p>
+<p><strong>坑 2：</strong>R2 的公共访问。R2 默认不公开，如果要直链访问，需要绑定自定义域名到 R2 桶。</p>
+<p><strong>坑 3：</strong>上传大小限制。Worker 免费版有 100MB 请求体限制，大图需要用分片上传或降低分辨率后再传。</p>
     `.trim(),
-  },
+  }, 
   {
     id: 'constructivism-design',
     date: '2026-05-25',
@@ -84,26 +131,26 @@ const blogPosts = [
     `.trim(),
   },
   {
-    id: 'image-hosting-setup',
-    date: '2026-05-28',
-    title: 'CloudFlare-ImgBed 图床搭建',
-    excerpt: '用 R2 + KV + Worker 搭建私有图床的完整过程，踩坑记录。',
+    id: 'hello-world',
+    date: '2026-05-20',
+    title: 'Hello World — 站点上线',
+    excerpt: '153904.xyz 正式上线。聊聊这个站的技术选型和设计思路。',
     content: `
-<p><a href="https://github.com/MarSeventh/CloudFlare-ImgBed" target="_blank" rel="noopener">CloudFlare-ImgBed</a> 是一款基于 Cloudflare 的开源图床工具。</p>
+<p>经过几天的折腾，<strong>153904.xyz</strong> 终于上线了。</p>
 
-<h3>搭建步骤</h3>
-<ol>
-  <li>Fork 项目到自己的 GitHub</li>
-  <li>在 Cloudflare 控制台创建 R2 存储桶和 KV 命名空间</li>
-  <li>修改 <code>wrangler.toml</code> 绑定自己的 R2 和 KV</li>
-  <li><code>wrangler deploy</code> 部署 Worker</li>
-  <li>配置自定义域名指向 Worker</li>
-</ol>
+<h3>技术栈</h3>
+<ul>
+  <li><strong>托管：</strong>Cloudflare Pages — 免费、全球 CDN、自动部署</li>
+  <li><strong>图床：</strong>Cloudflare R2 + KV — 对象存储，配合 CloudFlare-ImgBed 使用</li>
+  <li><strong>域名：</strong>153904.xyz — 便宜好记</li>
+  <li><strong>风格：</strong>构成主义 + 二次元 — 几何线条 + 红黑配色</li>
+</ul>
 
-<h3>踩坑记录</h3>
-<p><strong>坑 1：</strong>CORS 配置。图床 Worker 默认可能不允许跨域请求，需要在前端页面和图床不在同一域名时手动添加 CORS 头。</p>
-<p><strong>坑 2：</strong>R2 的公共访问。R2 默认不公开，如果要直链访问，需要绑定自定义域名到 R2 桶。</p>
-<p><strong>坑 3：</strong>上传大小限制。Worker 免费版有 100MB 请求体限制，大图需要用分片上传或降低分辨率后再传。</p>
+<h3>为什么选这个技术栈</h3>
+<p>作为 Web 开发初学者，Cloudflare 的免费额度非常友好。Pages 直接连 GitHub 仓库，push 即部署。R2 有 10GB 免费存储，配合 Worker 做图床 API，比直接用 GitHub 存图片灵活很多。</p>
+
+<h3>后续计划</h3>
+<p>博客和留言板功能正在开发中，会用 Worker + KV 实现。目标是做成一个轻量但有完整功能的个人站点。</p>
     `.trim(),
-  },
+  },  
 ];

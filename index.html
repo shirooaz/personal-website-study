@@ -1,249 +1,220 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>153904.xyz — 构成主义</title>
-<link rel="icon" type="image/jpeg" href="https://cloudflare-imgbed-3m6.pages.dev/file/ICON/1780590657828_7F79677C2C24C7F052C919320536DFA8.jpg">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秋枫清澄 - 个人博客</title>
+    <meta name="description" content="记录成长的每一步，分享技术与生活的点滴">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<!-- ====== 四角几何装饰 ====== -->
-<div class="corner-deco corner-tl">
-  <svg viewBox="0 0 120 120"><polygon points="0,0 120,0 0,120" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="15" cy="15" r="4"/></svg>
-</div>
-<div class="corner-deco corner-tr">
-  <svg viewBox="0 0 120 120"><polygon points="120,0 120,120 0,0" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="105" cy="15" r="4"/></svg>
-</div>
-<div class="corner-deco corner-bl">
-  <svg viewBox="0 0 120 120"><polygon points="0,120 120,120 0,0" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="15" cy="105" r="4"/></svg>
-</div>
-<div class="corner-deco corner-br">
-  <svg viewBox="0 0 120 120"><polygon points="120,120 0,120 120,0" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="105" cy="105" r="4"/></svg>
-</div>
-
-<!-- ====== 斜线装饰 ====== -->
-<div class="diagonal-line dl-1"></div>
-<div class="diagonal-line dl-2"></div>
-<div class="diagonal-line dl-3"></div>
-<div class="diagonal-line dl-4"></div>
-
-<!-- ====== 顶部栏 ====== -->
-<header class="top-bar">
-  <div class="site-title">
-    <span class="tit-char t1">秋</span><span class="tit-char t2">枫</span><span class="tit-char t3">清</span><span class="tit-char t4">澄</span>
-  </div>
-  <div class="clock-wrap" id="clockWrap">
-    <div class="clock-label-wrap">
-      <span class="clock-label" id="clockLabel" title="点击切换秒数 | 双击同步时间">当前时间</span>
+    <!-- 背景效果 -->
+    <div class="page-bg"></div>
+    <div class="sakura-container"></div>
+    <div class="fireflies-container"></div>
+    
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar" id="progressBar"></div>
     </div>
-    <span class="clock-display" id="clock">00:00:00</span>
-  </div>
-  <nav class="top-nav">
-    <a href="index.html" class="nav-item active">首页</a>
-    <a href="blog.html" class="nav-item">博客</a>
-    <a href="columns.html" class="nav-item">专栏</a>
-    <a href="about.html" class="nav-item">关于</a>
-  </nav>
-</header>
-
-<!-- ====== 左侧栏：博客 ====== -->
-<aside class="side-panel left-panel">
-  <div class="panel-header">
-    <span class="panel-icon">◇</span>
-    <span class="panel-title">博客</span>
-    <span class="panel-sub">BLOG</span>
-  </div>
-  <div class="blog-list" id="blogList"></div>
-</aside>
-
-<!-- ====== 左侧栏：个人 ====== -->
-<aside class="side-panel empty-panel">
-  <div class="panel-header">
-    <span class="panel-icon">◇</span>
-    <span class="panel-title">个人</span>
-    <span class="panel-sub">PROFILE</span>
-  </div>
-  <div class="profile-body">
-    <div class="avatar-wrap">
-      <!-- ⚡ 头像：替换下方 src 为图床图片直链，建议正方形图片 -->
-      <img class="avatar" src="https://cloudflare-imgbed-3m6.pages.dev/file/ICON/1780591049011_2026-01-01_131243.png" alt="头像" id="profileAvatar">
-    </div>
-    <p class="profile-manifesto">
-      白发渔樵江渚上，惯看秋月春风。<br>
-      一壶浊酒喜相逢。古今多少事，都付笑谈中。
-    </p>
-    <div class="panel-links">
-    <a href="https://github.com/shirooaz" target="_blank" rel="noopener" class="panel-link-item" title="GitHub">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-    </a>
-    <a href="https://steamcommunity.com/id/dream_qiufeng" target="_blank" rel="noopener" class="panel-link-item" title="Steam">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/></svg>
-    </a>
-    <a href="https://space.bilibili.com/316650830" target="_blank" rel="noopener" class="panel-link-item" title="Bilibili">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z"/></svg>
-    </a>
-    <a href="mailto:qiufengqingcheng@outlook.com" class="panel-link-item" title="Email">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-    </a>
-    </div>
-  </div>
-</aside>
-
-<!-- ====== 中央：构成主义插画 ====== -->
-<main class="center-art">
-  <svg viewBox="0 0 600 600" class="constructivist-svg" id="mainArt">
-    <!-- 背景网格线 -->
-    <defs>
-      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
-      </pattern>
-      <radialGradient id="redGlow">
-        <stop offset="0%" stop-color="#e63946" stop-opacity="0.15"/>
-        <stop offset="100%" stop-color="#e63946" stop-opacity="0"/>
-      </radialGradient>
-      <linearGradient id="diagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#ff6b9d"/>
-        <stop offset="100%" stop-color="#e63946"/>
-      </linearGradient>
-    </defs>
-
-    <!-- 网格 -->
-    <rect width="600" height="600" fill="url(#grid)"/>
-
-    <!-- 大红色圆 — 构成主义核心元素 -->
-    <circle cx="310" cy="270" r="155" fill="url(#redGlow)" class="art-pulse"/>
-    <circle cx="310" cy="270" r="150" fill="none" stroke="#e63946" stroke-width="2.5" opacity="0.8" class="art-rotate-slow"/>
-    <circle cx="310" cy="270" r="140" fill="none" stroke="#e63946" stroke-width="1" opacity="0.4" stroke-dasharray="30 15" class="art-rotate-rev"/>
-
-    <!-- 黑色斜向矩形 — 构成主义标志性元素 -->
-    <g transform="rotate(22 310 270)" opacity="0.9">
-      <rect x="270" y="80" width="80" height="380" fill="#0a0a0f" stroke="#f0f0f0" stroke-width="1"/>
-      <rect x="280" y="100" width="60" height="180" fill="#e63946" opacity="0.7"/>
-    </g>
-
-    <!-- 白色三角形 -->
-    <polygon points="310,60 480,330 140,330" fill="none" stroke="#f0f0f0" stroke-width="1.5" opacity="0.6" class="art-float"/>
-
-    <!-- 金色小圆 -->
-    <circle cx="460" cy="400" r="28" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.7" class="art-float-delay"/>
-    <circle cx="460" cy="400" r="18" fill="#ffd700" opacity="0.1"/>
-
-    <!-- 斜线交叉 -->
-    <line x1="20" y1="20"  x2="580" y2="580" stroke="#f0f0f0" stroke-width="0.5" opacity="0.2"/>
-    <line x1="580" y1="20"  x2="20"  y2="580" stroke="#f0f0f0" stroke-width="0.5" opacity="0.2"/>
-    <line x1="300" y1="0"   x2="300" y2="600" stroke="#f0f0f0" stroke-width="0.3" opacity="0.15"/>
-    <line x1="0"   y1="300" x2="600" y2="300" stroke="#f0f0f0" stroke-width="0.3" opacity="0.15"/>
-
-    <!-- 交叉点圆点 -->
-    <circle cx="300" cy="300" r="5" fill="#e63946" class="art-pulse"/>
-    <circle cx="310" cy="270" r="3" fill="#f0f0f0"/>
-
-    <!-- 小几何方块群 -->
-    <rect x="130" y="420" width="16" height="16" fill="none" stroke="#ff6b9d" stroke-width="1" opacity="0.6" class="art-float-delay"/>
-    <rect x="155" y="430" width="12" height="12" fill="#ff6b9d" opacity="0.3" class="art-float"/>
-    <rect x="440" y="150" width="14" height="14" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.5" class="art-float-delay"/>
-    <rect x="460" y="170" width="10" height="10" fill="#ffd700" opacity="0.2" class="art-float"/>
-
-    <!-- 构成主义文字 -->
-    <text x="310" y="530" text-anchor="middle" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="64" font-weight="900" fill="#f0f0f0" opacity="0.04" letter-spacing="20">构成主义</text>
-
-    <!-- 下方刻度线 -->
-    <g opacity="0.25">
-      <line x1="80"  y1="550" x2="130" y2="550" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="160" y1="550" x2="190" y2="550" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="220" y1="550" x2="250" y2="550" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="350" y1="550" x2="380" y2="550" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="410" y1="550" x2="440" y2="550" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="470" y1="550" x2="520" y2="550" stroke="#f0f0f0" stroke-width="2"/>
-    </g>
-
-    <!-- 上方刻度线 -->
-    <g opacity="0.25">
-      <line x1="80"  y1="50" x2="130" y2="50" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="160" y1="50" x2="190" y2="50" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="220" y1="50" x2="250" y2="50" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="350" y1="50" x2="380" y2="50" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="410" y1="50" x2="440" y2="50" stroke="#f0f0f0" stroke-width="2"/>
-      <line x1="470" y1="50" x2="520" y2="50" stroke="#f0f0f0" stroke-width="2"/>
-    </g>
-  </svg>
-
-  <!-- 插图切换按钮 -->
-  <div class="art-controls">
-    <button class="art-btn active" data-variant="0" title="构成 I">●</button>
-    <button class="art-btn" data-variant="1" title="构成 II">◆</button>
-    <button class="art-btn" data-variant="2" title="构成 III">■</button>
-  </div>
-</main>
-
-<!-- ====== 底部栏：留言板 ====== -->
-<footer class="bottom-bar">
-  <div class="guestbook" id="guestbook">
-    <div class="gb-header">
-      <span class="panel-icon">◇</span>
-      <span class="gb-title">留言板</span>
-      <span class="panel-sub">GUESTBOOK</span>
-    </div>
-    <form class="gb-form" id="gbForm">
-      <div class="gb-form-row">
-        <textarea class="gb-textarea" id="gbMessage" placeholder="写下想说的话…" maxlength="500" required></textarea>
-        <div class="gb-form-right">
-          <input type="text" class="gb-input" id="gbName" placeholder="昵称" maxlength="20" required>
-          <input type="text" class="gb-input" id="gbEmail" placeholder="email (不会展示)" maxlength="50">
-          <button type="submit" class="gb-submit">发 送</button>
+    
+    <!-- 导航栏 -->
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="#home" class="logo">
+                <span class="logo-emoji" id="logoEmoji">🌿</span>
+                <span class="logo-text">秋枫清澄</span>
+            </a>
+            <div class="nav-links">
+                <a href="#home" class="nav-link">🏠 首页</a>
+                <a href="#articles" class="nav-link">📚 文章</a>
+                <a href="blog.html" class="nav-link">💻 博客</a>
+                <a href="#about" class="nav-link">🍃 关于</a>
+            </div>
+            <div class="nav-actions">
+                <button class="back-to-top" id="backToTop" title="回到顶部">
+                    <span>↑</span>
+                </button>
+                <button class="theme-toggle" id="themeToggle" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+            <button class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
-        <div class="gb-messages" id="gbMessages"></div>
-      </div>
-      <div class="gb-row gb-actions">
-        <span class="gb-hint">※ 留言存储在 Cloudflare KV，全站实时同步</span>
-      </div>
-    </form>
-  </div>
+    </nav>
+    
+    <!-- 英雄区域 -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">🌸 欢迎来到我的博客</h1>
+                <p class="hero-subtitle">
+                    <span id="typingText"></span><span class="typing-cursor"></span>
+                </p>
+                <div class="hero-buttons">
+                    <a href="#articles" class="btn btn-primary">📚 浏览文章</a>
+                    <a href="#about" class="btn btn-secondary">✨ 了解更多</a>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-hint">
+            <span>向下滚动</span>
+            <svg class="scroll-hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+    
+    <!-- 文章列表区域 -->
+    <section class="posts-section" id="articles">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">📝 最新文章</h2>
+                <p class="section-subtitle">精选技术分享与生活感悟</p>
+            </div>
+            <div class="posts-grid" id="articlesList">
+                <!-- 文章将由 JavaScript 动态渲染 -->
+            </div>
+            <div style="text-align: center; margin-top: 48px;">
+                <a href="articles.html" class="btn btn-secondary">查看更多文章 →</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 博客区域 -->
+    <section class="blog-section" id="blog">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">📔 博客</h2>
+                <p class="section-subtitle">生活随笔与技术记录</p>
+            </div>
+            <div class="blog-list" id="blogList">
+                <!-- 博客将由 JavaScript 动态渲染 -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- 关于区域 -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="about-content">
+                <h2 class="about-title">💭 关于我</h2>
+                
+                <!-- 头像和简介区域 -->
+                <div class="about-intro">
+                    <div class="about-avatar">
+                        <img src="https://image-153904.vercel.app/images/202410031021668.jpg" alt="秋枫清澄">
+                    </div>
+                    <div class="about-info">
+                        <p class="about-text">
+                            你好！我是秋枫清澄，一个热爱技术、喜欢二次元的前端开发者。
+                            这个博客用来记录我的学习历程、分享技术心得，也会放一些生活杂谈。
+                            感谢每一个路过的你，愿我们都能在各自的世界里闪闪发光 ✨
+                        </p>
+                        <!-- 社交链接按钮 -->
+                        <div class="social-buttons">
+                            <a href="https://github.com/shirooaz" class="social-btn" title="GitHub" target="_blank">
+                                <svg height="20" width="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                                </svg>
+                            </a>
+                            <a href="https://steamcommunity.com/profiles/76561199307021356/" class="social-btn" title="Steam" target="_blank">
+                                <svg height="20" width="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.455 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/>
+                                </svg>
+                            </a>
+                            <a href="https://space.bilibili.com/354658501794" class="social-btn" title="Bilibili" target="_blank">
+                                <svg height="20" width="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.129.933.386.25.258.383.574.4.947v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z"/>
+                                </svg>
+                            </a>
+                            <a href="mailto:qiu123feng456@163.com" class="social-btn" title="Email" target="_blank">
+                                <svg height="20" width="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 签名诗 -->
+                <p class="about-quote">白发渔樵江渚上，惯看秋月春风</p>
+                
+                <!-- 技能卡片 -->
+                <div class="skills-grid">
+                    <div class="skill-card reveal" onclick="showStory()">
+                        <div class="skill-icon">🏗️</div>
+                        <div class="skill-name">建站故事</div>
+                        <div class="skill-desc">从0到1的建站历程</div>
+                    </div>
+                    <div class="skill-card reveal">
+                        <div class="skill-icon">🎨</div>
+                        <div class="skill-name">前端开发</div>
+                        <div class="skill-desc">HTML/CSS/JavaScript</div>
+                    </div>
+                    <div class="skill-card reveal">
+                        <div class="skill-icon">⚡</div>
+                        <div class="skill-name">性能优化</div>
+                        <div class="skill-desc">让页面飞快如闪电</div>
+                    </div>
+                    <div class="skill-card reveal">
+                        <div class="skill-icon">🎮</div>
+                        <div class="skill-name">二次元</div>
+                        <div class="skill-desc">动漫/游戏/音乐</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 留言板区域 -->
+    <section class="message-section" id="message">
+        <div class="container">
+            <div class="message-content">
+                <h2 class="message-title">💬 留言板</h2>
+                <p class="message-subtitle">有什么想说的吗？留个言吧~</p>
+                
+                <!-- 留言表单 -->
+                <div class="message-form">
+                    <input type="text" id="messageName" class="message-input" placeholder="你的昵称" maxlength="20">
+                    <textarea id="messageContent" class="message-textarea" placeholder="写下你的留言..." maxlength="500"></textarea>
+                    <button class="btn btn-primary" id="submitMessage">📤 发送留言</button>
+                </div>
+                
+                <!-- 留言列表 -->
+                <div class="message-list" id="messageList">
+                    <p class="empty-hint">暂无留言，来做第一个留言的人吧~</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com" target="_blank" title="GitHub">🐱</a>
+                <a href="https://twitter.com" target="_blank" title="Twitter">🐦</a>
+                <a href="mailto:example@email.com" title="邮箱">📧</a>
+            </div>
+            <div class="footer-content">
+                <p>© 2026 秋枫清澄 · 用心记录每一天</p>
+                <p>Made with ❤️ and ☕</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="blog-data.js"></script>
+    <script src="script.js"></script>
 
-  <div class="bottom-index">
-    <div class="panel-header">
-      <span class="panel-icon">◇</span>
-      <span class="panel-title">索引</span>
-      <span class="panel-sub">LINKS</span>
-    </div>
-    <div class="link-groups">
-      <div class="link-group">
-        <div class="link-cat">AI</div>
-        <a href="https://claude.ai/new" target="_blank" rel="noopener" class="link-item">Claude</a>
-        <a href="https://chat.deepseek.com" target="_blank" rel="noopener" class="link-item">DeepSeek</a>
-        <a href="https://chatgpt.com" target="_blank" rel="noopener" class="link-item">ChatGPT</a>
-      </div>
-      <div class="link-group">
-        <div class="link-cat">常用</div>
-        <a href="https://github.com" target="_blank" rel="noopener" class="link-item">GitHub</a>
-        <a href="https://www.google.com" target="_blank" rel="noopener" class="link-item">Google</a>
-        <a href="https://www.youtube.com" target="_blank" rel="noopener" class="link-item">YouTube</a>
-      </div>
-      <div class="link-group">
-        <div class="link-cat">开发</div>
-        <a href="https://developer.mozilla.org" target="_blank" rel="noopener" class="link-item">MDN</a>
-        <a href="https://stackoverflow.com" target="_blank" rel="noopener" class="link-item">Stack Overflow</a>
-        <a href="https://dash.cloudflare.com" target="_blank" rel="noopener" class="link-item">Cloudflare</a>
-      </div>
-      <div class="link-group">
-        <div class="link-cat">ACG</div>
-        <a href="https://www.bilibili.com" target="_blank" rel="noopener" class="link-item">bilibili</a>
-        <a href="https://bgm.tv" target="_blank" rel="noopener" class="link-item">Bangumi</a>
-        <a href="https://www.pixiv.net" target="_blank" rel="noopener" class="link-item">pixiv</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer-info">
-    <span>© 2026 153904.xyz</span>
-    <span class="footer-sep">|</span>
-    <span>Powered by Cloudflare Pages</span>
-  </div>
-</footer>
-
-<script src="blog-data.js"></script>
-<script src="script.js"></script>
+    <!-- 博客模态框 -->
+    <div class="modal" id="blogModal"></div>
 </body>
 </html>

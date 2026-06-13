@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章 - 秋枫清澄</title>
+    <meta name="description" content="秋枫清澄的技术博客文章">
+    <link rel="icon" type="image/jpeg" href="https://cloudflare-imgbed-3m6.pages.dev/file/ICON/1780590657828_7F79677C2C24C7F052C919320536DFA8.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 文章详情页特有样式 */
+        .article-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-container {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 24px 120px;
+            width: 100%;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .article-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 32px;
+            transition: color 0.3s ease;
+        }
+
+        .article-back:hover {
+            color: var(--accent-primary);
+        }
+
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .article-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .article-tags {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .article-tag {
+            padding: 4px 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .article-content {
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .article-content h1,
+        .article-content h2,
+        .article-content h3 {
+            color: var(--text-primary);
+            margin-top: 32px;
+            margin-bottom: 16px;
+        }
+
+        .article-content h1 { font-size: 1.8rem; }
+        .article-content h2 { font-size: 1.5rem; }
+        .article-content h3 { font-size: 1.25rem; }
+
+        .article-content p {
+            margin-bottom: 16px;
+        }
+
+        .article-content a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .article-content a:hover {
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .article-content code {
+            background: var(--bg-surface);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            color: var(--accent-secondary);
+        }
+
+        .article-content pre {
+            background: var(--bg-surface);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 16px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+        }
+
+        .article-content blockquote {
+            border-left: 3px solid var(--accent-primary);
+            padding-left: 20px;
+            margin: 16px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .article-content li {
+            margin-bottom: 8px;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+
+        .article-content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 32px 0;
+        }
+
+        .article-footer {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .article-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .article-nav-item {
+            flex: 1;
+            padding: 16px 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .article-nav-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .article-nav-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .article-nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .article-nav-item.next {
+            text-align: right;
+        }
+
+        .article-empty {
+            text-align: center;
+            padding: 80px 24px;
+        }
+
+        .article-empty-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+
+        .article-empty-text {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .article-empty-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        /* 加载动画 */
+        .article-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50vh;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .article-container {
+                padding: 40px 16px 80px;
+            }
+
+            .article-title {
+                font-size: 1.75rem;
+            }
+
+            .article-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .article-nav {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景效果 -->
+    <div class="page-bg"></div>
+    <div class="sakura-container"></div>
+    <div class="fireflies-container"></div>
+
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- 页面包装器 -->
+    <div class="page-wrapper">
+        <!-- 导航栏 -->
+        <nav class="nav">
+            <div class="nav-content">
+                <a href="index.html" class="logo">秋枫清澄</a>
+                <div class="nav-links">
+                    <a href="index.html">🏠 首页</a>
+                    <a href="articles.html">📚 文章</a>
+                    <a href="index.html#about">💭 关于</a>
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="back-to-top" id="backToTop" title="回到顶部">
+                    <span>↑</span>
+                </button>
+                <button class="menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 文章内容区域 -->
+        <main class="article-container" id="articleContainer">
+            <div class="article-loading">
+                <div class="loading-spinner"></div>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-links">
+                    <a href="https://github.com/shirooaz" target="_blank" title="GitHub">🐱</a>
+                    <a href="https://twitter.com" target="_blank" title="Twitter">🐦</a>
+                    <a href="mailto:qiufengqingcheng@gmail.com" title="邮箱">📧</a>
+                </div>
+                <div class="footer-content">
+                    <p>© 2024 秋枫清澄 · 用心记录每一天</p>
+                    <p>Made with ❤️ and ☕</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 文章数据
+        const articles = [
+            {
+                id: 'hello-world',
+                title: '你好，世界！',
+                date: '2026-06-12',
+                tags: ['随笔'],
+                content: `
+                    <p>这是我的第一篇文章，记录下这个值得纪念的时刻。</p>
+                    <p>建站的过程充满了挑战，但每解决一个问题都让我感到无比满足。</p>
+                    <blockquote>每一个不曾起舞的日子，都是对生命的辜负。</blockquote>
+                    <p>未来我会在这里分享更多技术文章和生活感悟，希望能与你共同成长。</p>
+                `
+            },
+            {
+                id: 'cloudflare-journey',
+                title: '我的 Cloudflare 全家桶使用之旅',
+                date: '2026-06-10',
+                tags: ['技术', 'Cloudflare'],
+                content: `
+                    <p>从接触 Cloudflare 到现在，已经有一段时间了。今天来总结一下我使用的一些服务。</p>
+                    <h2>Pages</h2>
+                    <p>作为静态网站的托管平台，Pages 提供了免费的无限流量和快速的全球 CDN。</p>
+                    <h2>Workers</h2>
+                    <p>无服务器函数让我可以快速部署一些边缘计算逻辑，不需要维护服务器。</p>
+                    <h2>R2 Storage</h2>
+                    <p>用来存储图片等静态资源，配合 Workers 实现图床功能。</p>
+                `
+            },
+            {
+                id: 'website-v4',
+                title: '网站 v4.0 版本开发记录',
+                date: '2026-06-08',
+                tags: ['技术', '建站'],
+                content: `
+                    <p>经过一段时间的开发，网站终于升级到了 v4.0 版本。这次更新带来了很多变化。</p>
+                    <h2>设计理念</h2>
+                    <p>采用了「二次元·生机·静谧」的设计理念，希望在保持美观的同时也给读者带来舒适的阅读体验。</p>
+                    <h2>技术栈</h2>
+                    <ul>
+                        <li>纯 HTML/CSS/JavaScript，无框架依赖</li>
+                        <li>Cloudflare Pages 托管</li>
+                        <li>Cloudflare Workers 处理 API 请求</li>
+                    </ul>
+                `
+            }
+        ];
+
+        // 获取 URL 参数中的文章 ID
+        function getArticleId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // 渲染文章内容
+        function renderArticle(id) {
+            const container = document.getElementById('articleContainer');
+            const article = articles.find(a => a.id === id);
+
+            if (!article) {
+                container.innerHTML = `
+                    <div class="article-empty">
+                        <div class="article-empty-icon">📄</div>
+                        <p class="article-empty-text">文章不存在或已被删除</p>
+                        <a href="articles.html" class="article-empty-link">← 返回文章列表</a>
+                    </div>
+                `;
+                document.title = '文章不存在 - 秋枫清澄';
+                return;
+            }
+
+            // 找到上一篇和下一篇文章
+            const currentIndex = articles.findIndex(a => a.id === id);
+            const prevArticle = currentIndex < articles.length - 1 ? articles[currentIndex + 1] : null;
+            const nextArticle = currentIndex > 0 ? articles[currentIndex - 1] : null;
+
+            document.title = `${article.title} - 秋枫清澄`;
+
+            container.innerHTML = `
+                <header class="article-header">
+                    <a href="articles.html" class="article-back">← 返回文章列表</a>
+                    <h1 class="article-title">${article.title}</h1>
+                    <div class="article-meta">
+                        <span class="article-meta-item">📅 ${article.date}</span>
+                    </div>
+                    <div class="article-tags">
+                        ${article.tags.map(tag => `<span class="article-tag">${tag}</span>`).join('')}
+                    </div>
+                </header>
+                <article class="article-content">
+                    ${article.content}
+                </article>
+                <footer class="article-footer">
+                    <nav class="article-nav">
+                        ${prevArticle ? `
+                            <a href="article.html?id=${prevArticle.id}" class="article-nav-item prev">
+                                <div class="article-nav-label">← 上一篇</div>
+                                <div class="article-nav-title">${prevArticle.title}</div>
+                            </a>
+                        ` : '<div></div>'}
+                        ${nextArticle ? `
+                            <a href="article.html?id=${nextArticle.id}" class="article-nav-item next">
+                                <div class="article-nav-label">下一篇 →</div>
+                                <div class="article-nav-title">${nextArticle.title}</div>
+                            </a>
+                        ` : '<div></div>'}
+                    </nav>
+                </footer>
+            `;
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            const articleId = getArticleId();
+            if (articleId) {
+                renderArticle(articleId);
+            } else {
+                // 如果没有 ID 参数，显示错误
+                renderArticle(null);
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
