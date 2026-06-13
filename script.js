@@ -456,7 +456,7 @@ async function fetchMessages() {
         const response = await fetch(MESSAGE_API);
         if (response.ok) {
             const data = await response.json();
-            displayMessages(data.messages || []);
+            displayMessages(Array.isArray(data) ? data : data.messages || []);
         } else {
             // API不可用时加载本地存储
             loadLocalMessages();
