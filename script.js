@@ -266,13 +266,13 @@ function showStory() {
             <h2 class="story-title">🏗️ 建站故事</h2>
             <div class="story-content">
                 <h3>🌱 初识网页</h3>
-                <p>记得第一次接触网页制作是在高中时期，那时候只会用Dreamweaver拖拽几个表格，页面丑得不堪入目。但就是那种"我居然能做出一个网页"的成就感，让我爱上了前端开发。</p>
+                <p>记得第一次接触网页制作是在初中时期，那时候只会敲几行简单的html，页面完全没有美感。但就是那种"我居然能写几行网页代码"的成就感，让我对爱上前端开发产生萌芽。</p>
                 
                 <h3>☁️ Cloudflare全家桶</h3>
                 <p>大学后接触到了Cloudflare，被它强大的免费功能所吸引。从最初的CDN加速，到后来的Workers、Pages、R2存储，再到现在的AI Gateway，Cloudflare几乎满足了我所有的建站需求。</p>
                 
                 <h3>🎨 设计理念</h3>
-                <p>博客的设计融合了俄国构成主义与现代ACG风格。几何图形、大胆配色、功能至上——这是构成主义的精髓。而淡粉色渐变、樱花飘落、萤火虫飞舞，则是ACG世界的浪漫。</p>
+                <p>初代1.0博客的设计融合了构成主义与ACG风格。几何图形、大胆配色、功能至上——这是构成主义的精髓。而淡粉色渐变、樱花飘落、萤火虫飞舞，则是ACG世界的浪漫。</p>
                 
                 <h3>✨ 未来展望</h3>
                 <p>博客还会继续迭代优化。下一步计划加入评论区功能、优化移动端体验、添加更多动效。愿每一个来访者都能感受到这份用心~</p>
@@ -552,7 +552,7 @@ async function submitMessage() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name, content })
+            body: JSON.stringify({ name, body: content })
         });
         
         if (!response.ok) {
