@@ -1,630 +1,629 @@
-/**
- * 秋枫清澄个人博客 - 主脚本
- * 二次元·生机·静谧
- */
-
-// ========== 配置区 ==========
-const CONFIG = {
-    sakuraCount: 15,
-    fireflyCount: 20,
-    typingSpeed: 100,
-    scrollThreshold: 100
-};
-
-// Logo Emoji 列表
-const LOGO_EMOJIS = ['🌿', '🍃', '🌸', '🌺', '🦋', '🐦', '📚', '🎋', '✨', '🌱', '🪴', '🌾', '🍀', '🌴', '🎍'];
-
-// ========== 主题切换（根据时间段自动切换） ==========
-function setAutoTheme() {
-    const hour = new Date().getHours();
-    const isNightTime = hour >= 18 || hour < 6;
-    return isNightTime ? 'dark' : 'light';
-}
-
-const currentTheme = localStorage.getItem('theme') || setAutoTheme();
-document.documentElement.setAttribute('data-theme', currentTheme);
-
-function toggleTheme() {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-theme');
-    const newTheme = current === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
-}
-
-function updateThemeIcon(theme) {
-    const icon = document.querySelector('.theme-icon');
-    if (icon) {
-        icon.textContent = theme === 'dark' ? '🌙' : '☀️';
-    }
-}
-
-// 监听系统主题变化
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    if (!localStorage.getItem('theme')) {
-        const newTheme = e.matches ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        updateThemeIcon(newTheme);
-    }
-});
-
-// 每分钟检查时间，自动切换主题
-setInterval(() => {
-    if (!localStorage.getItem('theme')) {
-        const autoTheme = setAutoTheme();
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        if (autoTheme !== currentTheme) {
-            document.documentElement.setAttribute('data-theme', autoTheme);
-            updateThemeIcon(autoTheme);
-        }
-    }
-}, 60000);
-
-// ========== Logo Emoji 随机化 ==========
-function initLogoEmoji() {
-    const logoEmoji = document.getElementById('logoEmoji');
-    if (logoEmoji) {
-        const randomEmoji = LOGO_EMOJIS[Math.floor(Math.random() * LOGO_EMOJIS.length)];
-        logoEmoji.textContent = randomEmoji;
-    }
-}
-
-// ========== 平滑滚动到锚点 ==========
-function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const target = document.querySelector(targetId);
-            if (target) {
-                const navHeight = document.querySelector('.nav')?.offsetHeight || 70;
-                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-}
-
-// ========== 滚动进度条 ==========
-function initScrollProgress() {
-    const progressBar = document.getElementById('progressBar');
-    if (!progressBar) return;
-
-    window.addEventListener('scroll', () => {
-        const scrollTop = window.pageYOffset;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = (scrollTop / docHeight) * 100;
-        progressBar.style.width = `${progress}%`;
-    });
-}
-
-// ========== 滚动显示动画 ==========
-function initScrollReveal() {
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    reveals.forEach(el => observer.observe(el));
-}
-
-// ========== 樱花效果 ==========
-function createSakuraPetal(container) {
-    const petal = document.createElement('div');
-    petal.className = 'sakura-petal';
-    
-    const size = Math.random() * 15 + 10;
-    const startX = Math.random() * 100;
-    const duration = Math.random() * 5 + 8;
-    const delay = Math.random() * 5;
-    
-    petal.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        background: linear-gradient(135deg, rgba(255,182,193,0.9), rgba(255,192,203,0.7));
-        border-radius: 50% 0 50% 50%;
-        left: ${startX}%;
-        top: -20px;
-        opacity: 0.8;
-        animation: sakuraFall ${duration}s linear ${delay}s infinite;
-        box-shadow: 0 2px 4px rgba(255,182,193,0.3);
-    `;
-    
-    container.appendChild(petal);
-    
-    setTimeout(() => petal.remove(), (duration + delay) * 1000);
-}
-
-function createSakura() {
-    const container = document.querySelector('.sakura-container');
-    if (!container) return;
-    
-    for (let i = 0; i < CONFIG.sakuraCount; i++) {
-        setTimeout(() => createSakuraPetal(container), i * 800);
-    }
-    
-    setInterval(() => {
-        if (container.children.length < CONFIG.sakuraCount) {
-            createSakuraPetal(container);
-        }
-    }, 2000);
-}
-
-// ========== 萤火虫效果 ==========
-function createFirefly() {
-    const container = document.querySelector('.fireflies-container');
-    if (!container) return;
-    
-    const firefly = document.createElement('div');
-    firefly.className = 'firefly';
-    
-    const size = Math.random() * 4 + 2;
-    const startX = Math.random() * 100;
-    const startY = Math.random() * 100;
-    const duration = Math.random() * 10 + 8;
-    
-    firefly.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        background: radial-gradient(circle, rgba(144,238,144,0.9), rgba(144,238,144,0.3));
-        border-radius: 50%;
-        left: ${startX}%;
-        top: ${startY}%;
-        box-shadow: 0 0 8px rgba(144,238,144,0.6), 0 0 15px rgba(144,238,144,0.3);
-        animation: fireflyGlow ${duration}s ease-in-out infinite;
-    `;
-    
-    container.appendChild(firefly);
-    
-    setTimeout(() => firefly.remove(), duration * 1000);
-}
-
-function initFireflies() {
-    const container = document.querySelector('.fireflies-container');
-    if (!container) return;
-    
-    for (let i = 0; i < CONFIG.fireflyCount; i++) {
-        setTimeout(() => createFirefly(), i * 500);
-    }
-    
-    setInterval(createFirefly, 3000);
-}
-
-// ========== 打字机效果 ==========
-function initTypingEffect() {
-    const texts = [
-        '记录成长的每一步 ✨',
-        '分享技术与生活的点滴 🌟',
-        '二次元爱好者的精神角落 🎮',
-        '欢迎来到我的小世界 🏠'
-    ];
-    
-    const typingElement = document.getElementById('typingText');
-    if (!typingElement) return;
-    
-    let textIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    
-    function type() {
-        const currentText = texts[textIndex];
-        
-        if (isDeleting) {
-            typingElement.textContent = currentText.substring(0, charIndex - 1);
-            charIndex--;
-        } else {
-            typingElement.textContent = currentText.substring(0, charIndex + 1);
-            charIndex++;
-        }
-        
-        let typeSpeed = isDeleting ? 50 : 100;
-        
-        if (!isDeleting && charIndex === currentText.length) {
-            typeSpeed = 2000;
-            isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false;
-            textIndex = (textIndex + 1) % texts.length;
-            typeSpeed = 500;
-        }
-        
-        setTimeout(type, typeSpeed);
-    }
-    
-    type();
-}
-
-// ========== 建站故事 ==========
-const storyArticle = {
-    title: '建站故事：从0到1的博客诞生记',
-    excerpt: '分享我的建站历程，从初代的简单页面到如今现代化的博客系统，包括技术选型、设计理念和成长感悟。俄国构成主义风格与ACG元素的融合。',
-    date: '2024-01-01',
-    tag: '随笔',
-    url: '#',
-    isStory: true
-};
-
-function showStory() {
-    const modal = document.createElement('div');
-    modal.className = 'story-modal';
-    modal.innerHTML = `
-        <div class="story-modal-content">
-            <button class="story-close" onclick="this.closest('.story-modal').remove()">×</button>
-            <h2 class="story-title">🏗️ 建站故事</h2>
-            <div class="story-content">
-                <h3>🌱 初识网页</h3>
-                <p>记得第一次接触网页制作是在初中时期，那时候只会敲几行简单的html，页面完全没有美感。但就是那种"我居然能写几行网页代码"的成就感，让我对爱上前端开发产生萌芽。</p>
-                
-                <h3>☁️ Cloudflare全家桶</h3>
-                <p>大学后接触到了Cloudflare，被它强大的免费功能所吸引。从最初的CDN加速，到后来的Workers、Pages、R2存储，再到现在的AI Gateway，Cloudflare几乎满足了我所有的建站需求。</p>
-                
-                <h3>🎨 设计理念</h3>
-                <p>初代1.0博客的设计融合了构成主义与ACG风格。几何图形、大胆配色、功能至上——这是构成主义的精髓。而淡粉色渐变、樱花飘落、萤火虫飞舞，则是ACG世界的浪漫。</p>
-                
-                <h3>✨ 未来展望</h3>
-                <p>博客还会继续迭代优化。下一步计划加入评论区功能、优化移动端体验、添加更多动效。愿每一个来访者都能感受到这份用心~</p>
-                
-                <p class="story-footer">—— 秋枫清澄，写于某个深夜</p>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.remove();
-    });
-}
-
-// ========== 博客列表 ==========
-// ========== 博客渲染 ==========
-function renderBlogSection() {
-    const blogList = document.getElementById('blogList');
-    if (!blogList) return;
-    
-    if (blogPosts.length === 0) {
-        blogList.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">📝</div>
-                <p>暂无博客，随缘更新...</p>
-            </div>
-        `;
-        return;
-    }
-    
-    blogList.innerHTML = blogPosts.map((post, index) => `
-        <article class="blog-card reveal" data-index="${index}">
-            <div class="blog-card-header">
-                <span class="blog-date">📅 ${post.date}</span>
-            </div>
-            <h2 class="blog-card-title">${post.title}</h2>
-            <p class="blog-card-excerpt">${post.excerpt}</p>
-        </article>
-    `).join('');
-    
-    // 添加点击事件
-    document.querySelectorAll('.blog-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const index = parseInt(card.dataset.index);
-            openBlogModal(blogPosts[index]);
-        });
-    });
-    
-    setTimeout(initScrollReveal, 100);
-}
-
-// 打开博客模态框
-function openBlogModal(post) {
-    const modal = document.getElementById('blogModal');
-    if (!modal) return;
-    
-    modal.innerHTML = `
-        <div class="modal-content blog-modal-content">
-            <button class="modal-close" onclick="closeBlogModal()">×</button>
-            <div class="blog-modal-header">
-                <span class="blog-date">📅 ${post.date}</span>
-                <h1 class="blog-modal-title">${post.title}</h1>
-            </div>
-            <div class="blog-modal-body">
-                ${post.content}
-            </div>
-        </div>
-    `;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeBlogModal() {
-    const modal = document.getElementById('blogModal');
-    if (modal) {
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-}
-
-// 点击模态框背景关闭
-document.addEventListener('click', (e) => {
-    const modal = document.getElementById('blogModal');
-    if (e.target === modal) {
-        closeBlogModal();
-    }
-});
-
-// ESC 键关闭模态框
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeBlogModal();
-    }
-});
-
-// ========== 文章列表 ==========
-function renderArticles() {
-    const articlesList = document.getElementById('articlesList');
-    if (!articlesList) return;
-    
-    // 文章数据（未来从后端加载）
-    const articles = [];
-    
-    if (articles.length === 0) {
-        articlesList.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">📝</div>
-                <p>暂无文章，敬请期待...</p>
-            </div>
-        `;
-        return;
-    }
-    
-    articlesList.innerHTML = articles.map(article => `
-        <a href="${article.url}" class="post-card reveal">
-            <span class="post-tag">${article.tag}</span>
-            <h3 class="post-title">${article.title}</h3>
-            <p class="post-excerpt">${article.excerpt}</p>
-            <div class="post-meta">
-                <span class="post-date">📅 ${article.date}</span>
-            </div>
-        </a>
-    `).join('');
-    
-    setTimeout(initScrollReveal, 100);
-}
-
-// ========== 移动端菜单 ==========
-function initMobileMenu() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    
-    if (menuToggle && navLinks) {
-        menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-        
-        // 点击导航链接后关闭菜单
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-            });
-        });
-    }
-}
-
-// ========== 回到顶部 ==========
-function initBackToTop() {
-    const backToTop = document.getElementById('backToTop');
-    if (!backToTop) return;
-    
-    // 监听滚动显示/隐藏按钮
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-            backToTop.classList.add('visible');
-        } else {
-            backToTop.classList.remove('visible');
-        }
-    });
-    
-    // 点击回到顶部
-    backToTop.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-}
-
-// ========== 留言板功能 ==========
-// API: https://api.153904.xyz/api/messages
-// 参考: https://153904.xyz/blog-guestbook-launch
-
+const header = document.querySelector('.site-header');
+const progress = document.getElementById('scrollProgress');
+const backToTopButton = document.getElementById('backToTop');
+const footerBackToTopButton = document.getElementById('footerBackToTop');
+const menuToggle = document.getElementById('menuToggle');
+const navLinks = document.getElementById('navLinks');
+const heroLatest = document.getElementById('heroLatest');
+const heroLatestTitle = document.getElementById('heroLatestTitle');
+const heroLatestDate = document.getElementById('heroLatestDate');
+const journalYear = document.getElementById('journalYear');
+const footerYear = document.getElementById('footerYear');
+const postList = document.getElementById('postList');
+const tagFilters = document.getElementById('tagFilters');
+const articleSearch = document.getElementById('articleSearch');
+const searchClear = document.getElementById('searchClear');
+const postCountRange = document.getElementById('postCountRange');
+const postCountOutput = document.getElementById('postCountOutput');
+const postTotal = document.getElementById('postTotal');
+const messageForm = document.getElementById('messageForm');
+const messageName = document.getElementById('messageName');
+const messageContent = document.getElementById('messageContent');
+const messageCount = document.getElementById('messageCount');
+const submitMessageButton = document.getElementById('submitMessage');
+const submitMessageLabel = document.getElementById('submitMessageLabel');
+const messageFormStatus = document.getElementById('messageFormStatus');
+const messageList = document.getElementById('messageList');
+const refreshMessagesButton = document.getElementById('refreshMessages');
+const guestbookLayout = document.querySelector('.guestbook-layout');
+const guestbookResizer = document.getElementById('guestbookResizer');
+const { reducedMotionPreference, refreshIcons } = window.QiufengTheme;
+const savedPostCount = Number(localStorage.getItem('qiufeng-post-count'));
+let visiblePostCount = Number.isInteger(savedPostCount) && savedPostCount > 0 ? savedPostCount : 3;
+let activeTag = localStorage.getItem('qiufeng-active-tag') || '全部';
+let searchQuery = '';
 const MESSAGE_API = 'https://api.153904.xyz/api/messages';
+const MESSAGE_TIMEOUT_MS = 8000;
+const PENDING_MESSAGES_KEY = 'qiufeng-pending-messages';
+const LEGACY_MESSAGES_KEY = 'blogMessages';
+const GUESTBOOK_SPLIT_KEY = 'qiufeng-guestbook-split';
+const savedGuestbookSplit = Number(localStorage.getItem(GUESTBOOK_SPLIT_KEY));
+let guestbookSplit = Number.isFinite(savedGuestbookSplit) ? savedGuestbookSplit : 58;
+let activeResizePointer = null;
 
-async function fetchMessages() {
-    const messageList = document.getElementById('messageList');
-    if (!messageList) return;
-    
-    try {
-        const response = await fetch(MESSAGE_API);
-        if (response.ok) {
-            const data = await response.json();
-            displayMessages(Array.isArray(data) ? data : data.messages || []);
-        } else {
-            // API不可用时加载本地存储
-            loadLocalMessages();
-        }
-    } catch (error) {
-        // 网络错误时加载本地存储
-        loadLocalMessages();
-    }
-}
+function initTypingEffect() {
+    const typingElement = document.querySelector('.hero-lead');
+    if (!typingElement) return;
 
-function displayMessages(messages) {
-    const messageList = document.getElementById('messageList');
-    if (!messageList) return;
-    
-    if (!messages || messages.length === 0) {
-        messageList.innerHTML = '<p class="empty-hint">暂无留言，来做第一个留言的人吧~</p>';
+    const textParts = Array.from(typingElement.childNodes)
+        .map((node) => node.textContent || '')
+        .filter((part) => part.trim());
+    const text = textParts.map((part) => part.replace(/\s+/g, ' ').trim()).join('\n');
+    if (!text) return;
+
+    const textElement = document.createElement('span');
+    textElement.className = 'typing-text';
+    const cursorElement = document.createElement('span');
+    cursorElement.className = 'typing-cursor';
+    cursorElement.setAttribute('aria-hidden', 'true');
+    typingElement.replaceChildren(textElement, cursorElement);
+
+    if (reducedMotionPreference.matches) {
+        textElement.textContent = text;
+        cursorElement.hidden = true;
         return;
     }
-    
-    const sortedMessages = [...messages].reverse().slice(0, 20);
-    
-    messageList.innerHTML = sortedMessages.map(msg => `
-        <div class="message-item">
-            <div class="message-header">
-                <span class="message-author">${escapeHtml(msg.name || '匿名')}</span>
-                <span class="message-time">${formatTime(msg.created_at || msg.time)}</span>
-            </div>
-            <div class="message-body">${escapeHtml(msg.body || msg.message || '')}</div>
-        </div>
-    `).join('');
-}
 
-function loadLocalMessages() {
-    const messageList = document.getElementById('messageList');
-    if (!messageList) return;
-    
-    const localMessages = JSON.parse(localStorage.getItem('blogMessages') || '[]');
-    
-    if (localMessages.length === 0) {
-        messageList.innerHTML = '<p class="empty-hint">暂无留言，来做第一个留言的人吧~</p>';
-        return;
-    }
-    
-    const sortedMessages = [...localMessages].reverse().slice(0, 20);
-    
-    messageList.innerHTML = sortedMessages.map(msg => `
-        <div class="message-item">
-            <div class="message-header">
-                <span class="message-author">${escapeHtml(msg.name || '匿名')}</span>
-                <span class="message-time">${formatTime(msg.time)}</span>
-            </div>
-            <div class="message-body">${escapeHtml(msg.message || msg.body || '')}</div>
-        </div>
-    `).join('');
-}
-
-async function submitMessage() {
-    const nameInput = document.getElementById('messageName');
-    const contentInput = document.getElementById('messageContent');
-    
-    if (!nameInput || !contentInput) return;
-    
-    const name = nameInput.value.trim() || '匿名用户';
-    const content = contentInput.value.trim();
-    
-    if (!content) {
-        alert('请输入留言内容');
-        return;
-    }
-    
-    const submitBtn = document.getElementById('submitMessage');
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = '发送中...';
-    }
-    
-    const messageData = {
-        name: name,
-        message: content,
-        time: new Date().toISOString()
+    let characterIndex = 0;
+    const typeNextCharacter = () => {
+        textElement.textContent = text.slice(0, characterIndex);
+        if (characterIndex >= text.length) return;
+        characterIndex += 1;
+        window.setTimeout(typeNextCharacter, 100);
     };
-    
-    // 先保存到本地
-    const localMessages = JSON.parse(localStorage.getItem('blogMessages') || '[]');
-    localMessages.push(messageData);
-    if (localMessages.length > 50) localMessages.shift();
-    localStorage.setItem('blogMessages', JSON.stringify(localMessages));
-    
-    // 尝试发送到远程API
+
+    typeNextCharacter();
+}
+
+function formatDate(dateString) {
+    return dateString.replaceAll('-', '.');
+}
+
+function getArticleUrl(postId) {
+    return `article.html?id=${encodeURIComponent(postId)}`;
+}
+
+function setCurrentYear() {
+    const year = String(new Date().getFullYear());
+    journalYear.textContent = year;
+    footerYear.textContent = year;
+}
+
+function renderHeroLatest(posts) {
+    const latestPost = [...posts].sort((left, right) => right.date.localeCompare(left.date))[0];
+    if (!latestPost) {
+        heroLatest.hidden = true;
+        return;
+    }
+
+    heroLatest.hidden = false;
+    heroLatest.href = getArticleUrl(latestPost.id);
+    heroLatestTitle.textContent = latestPost.title;
+    heroLatestDate.dateTime = latestPost.date;
+    heroLatestDate.textContent = formatDate(latestPost.date);
+}
+
+function getPostSearchText(post) {
+    const documentFragment = new DOMParser().parseFromString(post.content || '', 'text/html');
+    return [post.title, post.excerpt, ...(post.tags || []), documentFragment.body.textContent]
+        .filter(Boolean)
+        .join(' ')
+        .toLocaleLowerCase('zh-CN');
+}
+
+function renderPosts() {
+    if (!Array.isArray(window.blogPosts) && typeof blogPosts === 'undefined') {
+        postList.innerHTML = '<p>文章数据暂时无法读取。</p>';
+        return;
+    }
+
+    const sourcePosts = typeof blogPosts !== 'undefined' ? blogPosts : window.blogPosts;
+    const allPosts = [...sourcePosts].sort((left, right) => right.date.localeCompare(left.date));
+    renderHeroLatest(allPosts);
+    const availableTags = [...new Set(allPosts.flatMap((post) => post.tags || []))];
+    if (activeTag !== '全部' && !availableTags.includes(activeTag)) activeTag = '全部';
+    renderTagFilters(availableTags);
+
+    const taggedPosts = activeTag === '全部'
+        ? allPosts
+        : allPosts.filter((post) => (post.tags || []).includes(activeTag));
+    const normalizedQuery = searchQuery.trim().toLocaleLowerCase('zh-CN');
+    const posts = normalizedQuery
+        ? taggedPosts.filter((post) => getPostSearchText(post).includes(normalizedQuery))
+        : taggedPosts;
+    const totalPosts = posts.length;
+    const displayCount = totalPosts > 0 ? Math.min(Math.max(1, visiblePostCount), totalPosts) : 0;
+    postList.innerHTML = totalPosts > 0 ? posts.slice(0, displayCount).map((post, index) => `
+        <a class="post-row reveal" href="${getArticleUrl(post.id)}" aria-label="阅读《${post.title}》">
+            <span class="post-meta">
+                <span class="post-index">${String(index + 1).padStart(2, '0')}</span>
+                <time datetime="${post.date}">${formatDate(post.date)}</time>
+            </span>
+            <span class="post-copy">
+                <h3>${post.title}</h3>
+                <p>${post.excerpt}</p>
+                <span class="post-tags">${(post.tags || []).map((tag) => `<span>${tag}</span>`).join('')}</span>
+            </span>
+            <span class="post-arrow" aria-hidden="true"><i data-lucide="arrow-up-right"></i></span>
+        </a>
+    `).join('') : `
+        <div class="search-empty">
+            <div>
+                <p>没有找到符合条件的文章。</p>
+                <button id="resetArticleFilters" type="button">清除搜索与筛选</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('resetArticleFilters')?.addEventListener('click', resetArticleFilters);
+    const rangeProgress = totalPosts > 1 ? ((displayCount - 1) / (totalPosts - 1)) * 100 : 100;
+    postCountRange.min = totalPosts > 0 ? '1' : '0';
+    postCountRange.max = String(totalPosts);
+    postCountRange.value = String(displayCount);
+    postCountRange.disabled = totalPosts <= 1;
+    postCountRange.style.setProperty('--range-progress', `${rangeProgress}%`);
+    postCountOutput.value = `${displayCount} / ${totalPosts}`;
+    const isFiltered = activeTag !== '全部' || normalizedQuery;
+    postTotal.textContent = isFiltered
+        ? `找到 ${totalPosts} 篇（全部 ${allPosts.length} 篇）`
+        : `共 ${allPosts.length} 篇公开记录`;
+    searchClear.hidden = !normalizedQuery;
+    refreshIcons();
+    initReveal();
+}
+
+function renderTagFilters(tags) {
+    tagFilters.innerHTML = ['全部', ...tags].map((tag) => `
+        <button class="tag-filter" type="button" data-tag="${tag}" aria-pressed="${String(tag === activeTag)}">${tag}</button>
+    `).join('');
+
+    tagFilters.querySelectorAll('.tag-filter').forEach((button) => {
+        button.addEventListener('click', () => setActiveTag(button.dataset.tag));
+    });
+}
+
+function setActiveTag(tag) {
+    if (tag === activeTag) return;
+    activeTag = tag;
+    localStorage.setItem('qiufeng-active-tag', tag);
+    renderPosts();
+}
+
+function resetArticleFilters() {
+    activeTag = '全部';
+    searchQuery = '';
+    articleSearch.value = '';
+    localStorage.setItem('qiufeng-active-tag', activeTag);
+    renderPosts();
+    articleSearch.focus();
+}
+
+function clearSearch() {
+    searchQuery = '';
+    articleSearch.value = '';
+    renderPosts();
+    articleSearch.focus();
+}
+
+function updateSearch() {
+    searchQuery = articleSearch.value;
+    renderPosts();
+}
+
+function setPostCount(count) {
+    if (!Number.isInteger(count) || count === visiblePostCount) return;
+    visiblePostCount = count;
+    localStorage.setItem('qiufeng-post-count', String(count));
+    renderPosts();
+}
+
+function redirectLegacyArticleUrl() {
+    const postId = new URL(window.location.href).searchParams.get('article');
+    if (!postId) return;
+
+    const posts = typeof blogPosts !== 'undefined' ? blogPosts : window.blogPosts;
+    if (Array.isArray(posts) && posts.some((post) => post.id === postId)) {
+        window.location.replace(getArticleUrl(postId));
+    }
+}
+
+function readStoredMessages(key) {
     try {
-        const response = await fetch(MESSAGE_API, {
+        const messages = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(messages) ? messages : [];
+    } catch {
+        return [];
+    }
+}
+
+function savePendingMessage(message) {
+    const pendingMessages = readStoredMessages(PENDING_MESSAGES_KEY);
+    pendingMessages.push(message);
+    localStorage.setItem(PENDING_MESSAGES_KEY, JSON.stringify(pendingMessages.slice(-50)));
+}
+
+function getMessageBody(message) {
+    return String(message.body || message.message || '').trim();
+}
+
+function getMessageTime(message) {
+    return message.time || message.created_at || new Date().toISOString();
+}
+
+function formatMessageTime(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '时间未知';
+
+    const difference = Date.now() - date.getTime();
+    if (difference >= 0 && difference < 60000) return '刚刚';
+    if (difference >= 0 && difference < 3600000) return `${Math.floor(difference / 60000)} 分钟前`;
+    if (difference >= 0 && difference < 86400000) return `${Math.floor(difference / 3600000)} 小时前`;
+    if (difference >= 0 && difference < 604800000) return `${Math.floor(difference / 86400000)} 天前`;
+
+    return new Intl.DateTimeFormat('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).format(date);
+}
+
+function createMessageState(title, detail = '', loading = false) {
+    const state = document.createElement('div');
+    state.className = 'message-state';
+
+    if (loading) {
+        const loader = document.createElement('span');
+        loader.className = 'message-loader';
+        loader.setAttribute('aria-hidden', 'true');
+        state.appendChild(loader);
+    }
+
+    const copy = document.createElement('div');
+    const message = document.createElement('p');
+    message.textContent = title;
+    copy.appendChild(message);
+
+    if (detail) {
+        const small = document.createElement('small');
+        small.textContent = detail;
+        copy.appendChild(small);
+    }
+
+    state.appendChild(copy);
+    return state;
+}
+
+function createMessageItem(message) {
+    const item = document.createElement('article');
+    item.className = 'message-item';
+
+    const name = String(message.name || '匿名用户').trim() || '匿名用户';
+    const avatar = document.createElement('span');
+    avatar.className = 'message-avatar';
+    avatar.setAttribute('aria-hidden', 'true');
+    avatar.textContent = Array.from(name)[0] || '匿';
+
+    const content = document.createElement('div');
+    const meta = document.createElement('div');
+    meta.className = 'message-meta';
+
+    const authorWrap = document.createElement('div');
+    const author = document.createElement('span');
+    author.className = 'message-author';
+    author.textContent = name;
+    authorWrap.appendChild(author);
+
+    if (message.local) {
+        const localBadge = document.createElement('span');
+        localBadge.className = 'message-local-badge';
+        localBadge.textContent = '本机保存';
+        authorWrap.appendChild(localBadge);
+    }
+
+    const time = document.createElement('time');
+    time.className = 'message-time';
+    time.dateTime = getMessageTime(message);
+    time.textContent = formatMessageTime(time.dateTime);
+
+    const body = document.createElement('p');
+    body.className = 'message-body';
+    body.textContent = getMessageBody(message);
+
+    meta.append(authorWrap, time);
+    content.append(meta, body);
+    item.append(avatar, content);
+    return item;
+}
+
+function renderMessages(messages, notice = '') {
+    const uniqueMessages = [];
+    const seen = new Set();
+
+    messages.forEach((message) => {
+        const body = getMessageBody(message);
+        if (!body) return;
+        const key = message.id || `${message.name}|${body}|${getMessageTime(message)}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        uniqueMessages.push(message);
+    });
+
+    uniqueMessages.sort((left, right) => new Date(getMessageTime(right)) - new Date(getMessageTime(left)));
+    messageList.replaceChildren();
+
+    if (notice) {
+        const sourceNote = document.createElement('div');
+        sourceNote.className = 'message-source-note';
+        sourceNote.textContent = notice;
+        messageList.appendChild(sourceNote);
+    }
+
+    if (uniqueMessages.length === 0) {
+        messageList.appendChild(createMessageState('还没有留言', '来写下第一句话吧。'));
+        return;
+    }
+
+    uniqueMessages.slice(0, 20).forEach((message) => {
+        messageList.appendChild(createMessageItem(message));
+    });
+}
+
+async function fetchWithTimeout(url, options = {}) {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), MESSAGE_TIMEOUT_MS);
+
+    try {
+        return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+        window.clearTimeout(timeoutId);
+    }
+}
+
+async function loadMessages() {
+    messageList.setAttribute('aria-busy', 'true');
+    messageList.replaceChildren(createMessageState('正在读取留言', '', true));
+    refreshMessagesButton.disabled = true;
+    refreshMessagesButton.classList.add('is-loading');
+
+    const pendingMessages = readStoredMessages(PENDING_MESSAGES_KEY).map((message) => ({ ...message, local: true }));
+
+    try {
+        const response = await fetchWithTimeout(MESSAGE_API, { headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error(`留言服务返回 ${response.status}`);
+        const data = await response.json();
+        const remoteMessages = Array.isArray(data) ? data : data.messages || [];
+        const notice = pendingMessages.length > 0 ? '部分留言仅保存在本机。' : '';
+        renderMessages([...remoteMessages, ...pendingMessages], notice);
+    } catch {
+        const legacyMessages = readStoredMessages(LEGACY_MESSAGES_KEY).map((message) => ({ ...message, local: true }));
+        renderMessages([...pendingMessages, ...legacyMessages], '暂时无法连接在线留言，正在显示本机记录。');
+    } finally {
+        messageList.setAttribute('aria-busy', 'false');
+        refreshMessagesButton.disabled = false;
+        refreshMessagesButton.classList.remove('is-loading');
+    }
+}
+
+function setMessageFormStatus(message, state = '') {
+    messageFormStatus.textContent = message;
+    if (state) {
+        messageFormStatus.dataset.state = state;
+    } else {
+        delete messageFormStatus.dataset.state;
+    }
+}
+
+function updateMessageCount() {
+    messageCount.textContent = `${messageContent.value.length} / 500`;
+    messageContent.removeAttribute('aria-invalid');
+    if (messageFormStatus.dataset.state === 'error') setMessageFormStatus('');
+}
+
+async function submitMessage(event) {
+    event.preventDefault();
+    const name = messageName.value.trim() || '匿名用户';
+    const body = messageContent.value.trim();
+
+    if (!body) {
+        messageContent.setAttribute('aria-invalid', 'true');
+        setMessageFormStatus('请先写下留言内容。', 'error');
+        messageContent.focus();
+        return;
+    }
+
+    submitMessageButton.disabled = true;
+    submitMessageButton.classList.add('is-loading');
+    submitMessageButton.setAttribute('aria-busy', 'true');
+    submitMessageLabel.textContent = '发送中';
+    setMessageFormStatus('');
+
+    try {
+        const response = await fetchWithTimeout(MESSAGE_API, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, body: content })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, body }),
         });
-        
+        const result = await response.json().catch(() => ({}));
+
         if (!response.ok) {
-            console.log('远程API不可用，留言仅保存在本地');
+            const requestError = new Error(result.error || '留言发送失败，请稍后再试。');
+            requestError.isRequestError = response.status < 500;
+            throw requestError;
         }
+
+        messageContent.value = '';
+        updateMessageCount();
+        setMessageFormStatus('留言已发送。', 'success');
+        await loadMessages();
     } catch (error) {
-        console.log('网络错误，留言仅保存在本地');
-    }
-    
-    // 刷新留言列表
-    fetchMessages();
-    
-    // 清空输入框
-    nameInput.value = '';
-    contentInput.value = '';
-    
-    if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '📤 发送留言';
+        if (error.isRequestError) {
+            setMessageFormStatus(error.message, 'error');
+        } else {
+            savePendingMessage({
+                id: `local-${Date.now().toString(36)}`,
+                name,
+                body,
+                time: new Date().toISOString(),
+                local: true,
+            });
+            messageContent.value = '';
+            updateMessageCount();
+            setMessageFormStatus('网络暂不可用，留言已保存在本机。', 'offline');
+            await loadMessages();
+        }
+    } finally {
+        submitMessageButton.disabled = false;
+        submitMessageButton.classList.remove('is-loading');
+        submitMessageButton.removeAttribute('aria-busy');
+        submitMessageLabel.textContent = '发送留言';
+        refreshIcons();
     }
 }
 
-function initMessageBoard() {
-    const submitBtn = document.getElementById('submitMessage');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', submitMessage);
+function getGuestbookSplitLimits() {
+    const width = guestbookLayout.getBoundingClientRect().width;
+    const dividerWidth = guestbookResizer.offsetWidth || 56;
+    const minimum = width > 0 ? (280 / width) * 100 : 30;
+    const maximum = width > 0 ? ((width - dividerWidth - 300) / width) * 100 : 70;
+
+    return {
+        minimum: Math.max(25, minimum),
+        maximum: Math.min(75, Math.max(minimum, maximum)),
+    };
+}
+
+function applyGuestbookSplit(value, persist = false) {
+    if (window.innerWidth <= 760) return;
+
+    const { minimum, maximum } = getGuestbookSplitLimits();
+    guestbookSplit = Math.min(maximum, Math.max(minimum, value));
+    guestbookLayout.style.setProperty('--guestbook-left', `${guestbookSplit}%`);
+    guestbookResizer.setAttribute('aria-valuemin', String(Math.round(minimum)));
+    guestbookResizer.setAttribute('aria-valuemax', String(Math.round(maximum)));
+    guestbookResizer.setAttribute('aria-valuenow', String(Math.round(guestbookSplit)));
+
+    if (persist) localStorage.setItem(GUESTBOOK_SPLIT_KEY, String(guestbookSplit));
+}
+
+function updateGuestbookSplitFromPointer(event) {
+    if (event.pointerId !== activeResizePointer) return;
+    const bounds = guestbookLayout.getBoundingClientRect();
+    const dividerWidth = guestbookResizer.offsetWidth || 56;
+    const leftWidth = event.clientX - bounds.left - dividerWidth / 2;
+    applyGuestbookSplit((leftWidth / bounds.width) * 100);
+}
+
+function startGuestbookResize(event) {
+    if (window.innerWidth <= 760 || event.button !== 0) return;
+    activeResizePointer = event.pointerId;
+    guestbookResizer.setPointerCapture(event.pointerId);
+    document.body.classList.add('is-resizing');
+    updateGuestbookSplitFromPointer(event);
+}
+
+function finishGuestbookResize(event) {
+    if (event.pointerId !== activeResizePointer) return;
+    activeResizePointer = null;
+    document.body.classList.remove('is-resizing');
+    localStorage.setItem(GUESTBOOK_SPLIT_KEY, String(guestbookSplit));
+}
+
+function adjustGuestbookSplitWithKeyboard(event) {
+    const { minimum, maximum } = getGuestbookSplitLimits();
+    const step = event.shiftKey ? 5 : 2;
+    let nextValue = guestbookSplit;
+
+    if (event.key === 'ArrowLeft') nextValue -= step;
+    else if (event.key === 'ArrowRight') nextValue += step;
+    else if (event.key === 'Home') nextValue = minimum;
+    else if (event.key === 'End') nextValue = maximum;
+    else return;
+
+    event.preventDefault();
+    applyGuestbookSplit(nextValue, true);
+}
+
+function toggleMenu() {
+    const isOpen = navLinks.classList.toggle('is-open');
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    menuToggle.setAttribute('aria-label', isOpen ? '关闭导航' : '打开导航');
+    menuToggle.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}" aria-hidden="true"></i>`;
+    refreshIcons();
+}
+
+function closeMenu() {
+    navLinks.classList.remove('is-open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    menuToggle.setAttribute('aria-label', '打开导航');
+    menuToggle.innerHTML = '<i data-lucide="menu" aria-hidden="true"></i>';
+    refreshIcons();
+}
+
+function updateScrollState() {
+    const scrollTop = window.scrollY;
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const percentage = scrollable > 0 ? (scrollTop / scrollable) * 100 : 0;
+    progress.style.width = `${percentage}%`;
+    header.classList.toggle('is-scrolled', scrollTop > 16);
+    backToTopButton.disabled = scrollTop < 200;
+}
+
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: reducedMotionPreference.matches ? 'auto' : 'smooth',
+    });
+}
+
+function initReveal() {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const items = document.querySelectorAll('.reveal');
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        items.forEach((item) => item.classList.add('is-visible'));
+        return;
     }
-    
-    // 加载留言
-    fetchMessages();
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    items.forEach((item) => observer.observe(item));
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function formatTime(isoString) {
-    const date = new Date(isoString);
-    const now = new Date();
-    const diff = now - date;
-    
-    if (diff < 60000) return '刚刚';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
-    if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`;
-    
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-}
-
-// ========== 初始化 ==========
-document.addEventListener('DOMContentLoaded', () => {
-    // 初始化主题图标
-    updateThemeIcon(currentTheme);
-    
-    // 绑定主题切换按钮
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
-    
-    // 初始化各功能
-    initLogoEmoji();
-    initSmoothScroll();
-    initScrollProgress();
-    createSakura();
-    initFireflies();
-    initTypingEffect();
-    renderArticles();
-    renderBlogSection();
-    initMobileMenu();
-    initBackToTop();
-    initMessageBoard();
+backToTopButton.addEventListener('click', scrollToTop);
+footerBackToTopButton.addEventListener('click', scrollToTop);
+menuToggle.addEventListener('click', toggleMenu);
+articleSearch.addEventListener('input', updateSearch);
+searchClear.addEventListener('click', clearSearch);
+postCountRange.addEventListener('input', () => setPostCount(Number(postCountRange.value)));
+messageForm.addEventListener('submit', submitMessage);
+messageContent.addEventListener('input', updateMessageCount);
+refreshMessagesButton.addEventListener('click', loadMessages);
+guestbookResizer.addEventListener('pointerdown', startGuestbookResize);
+guestbookResizer.addEventListener('pointermove', updateGuestbookSplitFromPointer);
+guestbookResizer.addEventListener('pointerup', finishGuestbookResize);
+guestbookResizer.addEventListener('pointercancel', finishGuestbookResize);
+guestbookResizer.addEventListener('keydown', adjustGuestbookSplitWithKeyboard);
+guestbookResizer.addEventListener('dblclick', () => applyGuestbookSplit(58, true));
+navLinks.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+window.addEventListener('scroll', updateScrollState, { passive: true });
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 760) closeMenu();
+    applyGuestbookSplit(guestbookSplit);
 });
+
+setCurrentYear();
+initTypingEffect();
+renderPosts();
+redirectLegacyArticleUrl();
+updateMessageCount();
+loadMessages();
+applyGuestbookSplit(guestbookSplit);
+updateScrollState();
+refreshIcons();

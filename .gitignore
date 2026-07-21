@@ -147,17 +147,18 @@ vite.config.ts.timestamp-*
 Thumbs.db
 desktop.ini
 
-# 编辑器
+# 编辑器和本地工具数据
 .vscode/
 .idea/
+.claude/
+.reasonix/
 
 # Wrangler 本地缓存
 .wrangler/
 
-# 截图
-*.png
-*.jpg
+# 测试截图统一放入此目录
+screenshots/
 
-# 旧版 Worker 目录
-guestbook-worker/
-test0.1/
+# 本地归档与临时说明
+上一版归档/
+2.0归档/
