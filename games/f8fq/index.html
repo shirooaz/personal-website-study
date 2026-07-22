@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#d8d3c8">
+  <meta name="description" content="飞八分钱原创浏览器小游戏">
+  <title>飞八分钱</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" id="app">
+    <section class="game-shell" id="gameShell" data-theme="ruins" aria-label="飞八分钱游戏">
+      <header class="hud">
+        <div class="cent-hud" aria-label="八分钱进度">
+          <span class="wordmark">飞八分钱</span>
+          <div class="cent-readout">
+            <strong id="centCount">0</strong><span>/ 8</span>
+          </div>
+          <div class="cent-dots" id="centDots" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+
+        <div class="score-hud" aria-label="本局分数">
+          <span>本局</span>
+          <strong id="scoreValue">00</strong>
+        </div>
+
+        <nav class="hud-tools" aria-label="游戏工具">
+          <button class="icon-button" id="muteButton" type="button" aria-label="静音" aria-pressed="false" data-tooltip="静音">
+            <svg class="icon-volume" aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M11 5 6 9H2v6h4l5 4V5Z"></path>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+            <svg class="icon-volume-x" aria-hidden="true" viewBox="0 0 24 24" hidden>
+              <path d="M11 5 6 9H2v6h4l5 4V5Z"></path>
+              <path d="m22 9-6 6"></path>
+              <path d="m16 9 6 6"></path>
+            </svg>
+          </button>
+          <button class="icon-button" id="pauseButton" type="button" aria-label="暂停" data-tooltip="暂停" disabled>
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <rect width="4" height="16" x="6" y="4" rx="1"></rect>
+              <rect width="4" height="16" x="14" y="4" rx="1"></rect>
+            </svg>
+          </button>
+          <button class="icon-button" id="tweaksButton" type="button" aria-label="打开调校面板" aria-expanded="false" data-tooltip="调校">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <line x1="21" x2="14" y1="4" y2="4"></line>
+              <line x1="10" x2="3" y1="4" y2="4"></line>
+              <line x1="21" x2="12" y1="12" y2="12"></line>
+              <line x1="8" x2="3" y1="12" y2="12"></line>
+              <line x1="21" x2="16" y1="20" y2="20"></line>
+              <line x1="12" x2="3" y1="20" y2="20"></line>
+              <line x1="14" x2="14" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="10" y2="14"></line>
+              <line x1="16" x2="16" y1="18" y2="22"></line>
+            </svg>
+          </button>
+        </nav>
+      </header>
+
+      <div class="playfield" id="playfield">
+        <canvas id="gameCanvas" aria-label="飞行游戏区域"></canvas>
+
+        <section class="state-overlay ready-state" id="readyOverlay" aria-labelledby="gameTitle">
+          <div class="state-copy">
+            <p class="state-kicker">废墟 · 01</p>
+            <h1 id="gameTitle">飞八分钱</h1>
+            <p>穿过废墟，凑满八分。</p>
+          </div>
+          <button class="command-button command-button--primary" id="startButton" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            <span>开局</span>
+          </button>
+        </section>
+
+        <section class="state-overlay modal-state" id="pauseOverlay" aria-labelledby="pauseTitle" hidden>
+          <div class="state-copy">
+            <p class="state-kicker">停在半空</p>
+            <h2 id="pauseTitle">暂停</h2>
+          </div>
+          <button class="command-button" id="resumeButton" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            <span>继续</span>
+          </button>
+        </section>
+
+        <section class="state-overlay modal-state gameover-state" id="gameoverOverlay" aria-labelledby="gameoverTitle" hidden>
+          <div class="state-copy">
+            <p class="state-kicker">本次落点</p>
+            <h2 id="gameoverTitle">飞到这里</h2>
+          </div>
+          <dl class="result-grid">
+            <div><dt>本局</dt><dd id="finalScore">00</dd></div>
+            <div><dt>纪录</dt><dd id="bestScore">00</dd></div>
+          </dl>
+          <button class="command-button command-button--primary" id="restartButton" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            <span>再飞一次</span>
+          </button>
+        </section>
+
+        <section class="state-overlay error-state" id="errorOverlay" role="alert" hidden>
+          <div class="state-copy">
+            <p class="state-kicker">装载失败</p>
+            <h2>无法起飞</h2>
+            <p>当前浏览器缺少游戏所需功能。</p>
+          </div>
+        </section>
+
+        <div class="combo-banner" id="comboBanner" aria-hidden="true">
+          <span>八分</span><strong>+8</strong>
+        </div>
+
+        <div class="sr-status" id="liveStatus" aria-live="polite" aria-atomic="true"></div>
+        <noscript><p class="noscript-message">请启用 JavaScript 后再开局。</p></noscript>
+      </div>
+
+      <aside class="tweaks-panel" id="tweaksPanel" aria-labelledby="tweaksTitle" hidden>
+        <header class="tweaks-header">
+          <div>
+            <span>视觉与手感</span>
+            <h2 id="tweaksTitle">Tweaks</h2>
+          </div>
+          <button class="icon-button icon-button--light" id="closeTweaksButton" type="button" aria-label="关闭调校面板">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </header>
+
+        <fieldset class="control-group">
+          <legend>画面</legend>
+          <div class="segmented-control segmented-control--three">
+            <label><input type="radio" name="theme" value="ruins" checked><span>废墟</span></label>
+            <label><input type="radio" name="theme" value="newsprint"><span>报纸</span></label>
+            <label><input type="radio" name="theme" value="night"><span>夜行</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="control-group">
+          <legend>速度</legend>
+          <div class="segmented-control segmented-control--three">
+            <label><input type="radio" name="difficulty" value="calm"><span>舒缓</span></label>
+            <label><input type="radio" name="difficulty" value="standard" checked><span>标准</span></label>
+            <label><input type="radio" name="difficulty" value="fast"><span>疾速</span></label>
+          </div>
+        </fieldset>
+
+        <div class="switch-row">
+          <label for="grainToggle"><span>纸面颗粒</span><input id="grainToggle" type="checkbox" checked></label>
+          <label for="motionToggle"><span>低动效</span><input id="motionToggle" type="checkbox"></label>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="js/engine.js"></script>
+  <script src="js/visuals.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -335,11 +335,26 @@ svg {
 .wordmark {
     display: inline-flex;
     align-items: center;
-    gap: 11px;
+    gap: 4px;
     min-width: max-content;
     font-size: 19px;
     font-weight: 700;
     line-height: 1;
+}
+
+.wordmark-game-link {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 44px;
+    margin-inline: -8px -4px;
+    border-radius: 3px;
+}
+
+.wordmark-home {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
 }
 
 .wordmark-mark {
@@ -350,7 +365,8 @@ svg {
     transition: background-color 180ms ease, transform 240ms var(--ease);
 }
 
-.wordmark:hover .wordmark-mark {
+.wordmark-game-link:hover .wordmark-mark,
+.wordmark-game-link:focus-visible .wordmark-mark {
     background: var(--accent);
     transform: rotate(135deg);
 }
