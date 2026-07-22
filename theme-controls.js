@@ -15,14 +15,37 @@
     const finePointerPreference = window.matchMedia('(hover: hover) and (pointer: fine)');
     const presetMap = new Map(data.presets.map((preset) => [preset.id, preset]));
     const effectMap = new Map(data.effects.map((effect) => [effect.id, effect]));
+    const cursorDotMap = new Map(data.cursorDots.map((dot) => [dot.id, dot]));
     const savedAccent = localStorage.getItem('qiufeng-accent');
     const savedEffect = localStorage.getItem('qiufeng-falling-effect');
+    const savedCursorDot = localStorage.getItem('qiufeng-cursor-dot');
+    const savedCustomCursorDot = localStorage.getItem('qiufeng-cursor-dot-custom');
+    const defaultCustomCursorDot = '#f2eee7';
+    const isHexColor = (value) => /^#[0-9a-f]{6}$/i.test(value || '');
     const state = {
         accent: presetMap.has(savedAccent) ? savedAccent : data.defaultAccent,
         effect: effectMap.has(savedEffect) ? savedEffect : data.defaultEffect,
         effectEnabled: localStorage.getItem('qiufeng-petal-effect') !== 'off',
+        cursorDot: savedCursorDot === 'custom' || cursorDotMap.has(savedCursorDot)
+            ? savedCursorDot
+            : data.defaultCursorDot,
+        customCursorDot: isHexColor(savedCustomCursorDot) ? savedCustomCursorDot : defaultCustomCursorDot,
     };
     let resizeTimer;
+
+    const cursorDotDivider = document.createElement('div');
+    cursorDotDivider.className = 'accent-menu-divider';
+    const cursorDotSetting = document.createElement('div');
+    cursorDotSetting.className = 'cursor-dot-setting';
+    const cursorDotLabel = document.createElement('span');
+    cursorDotLabel.className = 'cursor-dot-setting-label';
+    cursorDotLabel.innerHTML = '<i data-lucide="mouse-pointer-2" aria-hidden="true"></i><span>指针圆点</span>';
+    const cursorDotOptionsRoot = document.createElement('div');
+    cursorDotOptionsRoot.className = 'cursor-dot-options';
+    cursorDotOptionsRoot.setAttribute('role', 'group');
+    cursorDotOptionsRoot.setAttribute('aria-label', '指针中心圆点颜色');
+    cursorDotSetting.append(cursorDotLabel, cursorDotOptionsRoot);
+    accentMenu.append(cursorDotDivider, cursorDotSetting);
 
     function refreshIcons() {
         if (window.lucide) window.lucide.createIcons();
@@ -251,6 +274,37 @@
         effectOptionsRoot.replaceChildren(fragment);
     }
 
+    function renderCursorDotOptions() {
+        const fragment = document.createDocumentFragment();
+        data.cursorDots.forEach((dot) => {
+            const button = document.createElement('button');
+            button.className = 'cursor-dot-option';
+            button.type = 'button';
+            button.dataset.cursorDot = dot.id;
+            button.setAttribute('aria-label', dot.name);
+            button.setAttribute('aria-pressed', 'false');
+            button.title = dot.name;
+
+            const swatch = document.createElement('span');
+            swatch.className = 'cursor-dot-swatch';
+            swatch.setAttribute('aria-hidden', 'true');
+            swatch.style.setProperty('--cursor-dot-swatch', dot.color || 'var(--accent-strong)');
+            button.appendChild(swatch);
+            fragment.appendChild(button);
+        });
+
+        const customLabel = document.createElement('label');
+        customLabel.className = 'cursor-dot-custom';
+        customLabel.title = '自定义颜色';
+        const customInput = document.createElement('input');
+        customInput.type = 'color';
+        customInput.value = state.customCursorDot;
+        customInput.setAttribute('aria-label', '自定义指针圆点颜色');
+        customLabel.appendChild(customInput);
+        fragment.appendChild(customLabel);
+        cursorDotOptionsRoot.replaceChildren(fragment);
+    }
+
     function updateRadioOptions(container, dataKey, value) {
         container.querySelectorAll(`[data-${dataKey}]`).forEach((option) => {
             const selected = option.dataset[dataKey] === value;
@@ -293,6 +347,30 @@
         }
     }
 
+    function parseRgb(color) {
+        const channels = color.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+        return channels?.length === 3 && channels.every(Number.isFinite) ? channels : null;
+    }
+
+    function syncCursorBlendColor() {
+        const probe = document.createElement('span');
+        probe.style.cssText = 'position:fixed;visibility:hidden;color:var(--cursor-dot-color);background-color:var(--bg);';
+        document.body.appendChild(probe);
+
+        const cursorColor = parseRgb(getComputedStyle(probe).color);
+        const backgroundColor = parseRgb(getComputedStyle(probe).backgroundColor);
+        probe.remove();
+        if (!cursorColor || !backgroundColor) return;
+
+        const blendChannels = cursorColor.map((channel, index) => {
+            const background = backgroundColor[index];
+            if (background + channel <= 255) return Math.round(background + channel);
+            if (background - channel >= 0) return Math.round(background - channel);
+            return background < 128 ? 255 : 0;
+        });
+        root.style.setProperty('--cursor-dot-blend-color', `rgb(${blendChannels.join(' ')})`);
+    }
+
     function setAccent(accent, persist = true) {
         state.accent = presetMap.has(accent) ? accent : data.defaultAccent;
         const scheme = getScheme(presetMap.get(state.accent));
@@ -301,7 +379,34 @@
         root.style.setProperty('--accent-strong', scheme.accentStrong);
         updateRadioOptions(accentOptionsRoot, 'accent', state.accent);
         if (persist) localStorage.setItem('qiufeng-accent', state.accent);
+        syncCursorBlendColor();
         createFallingElements();
+    }
+
+    function setCursorDot(cursorDot, persist = true) {
+        state.cursorDot = cursorDot === 'custom' || cursorDotMap.has(cursorDot)
+            ? cursorDot
+            : data.defaultCursorDot;
+        const preset = cursorDotMap.get(state.cursorDot);
+        const color = state.cursorDot === 'custom'
+            ? state.customCursorDot
+            : preset?.color || 'var(--accent-strong)';
+        root.dataset.cursorDot = state.cursorDot;
+        root.style.setProperty('--cursor-dot-color', color);
+        syncCursorBlendColor();
+        cursorDotOptionsRoot.querySelectorAll('[data-cursor-dot]').forEach((option) => {
+            option.setAttribute('aria-pressed', String(option.dataset.cursorDot === state.cursorDot));
+        });
+        cursorDotOptionsRoot.querySelector('.cursor-dot-custom')
+            ?.classList.toggle('is-selected', state.cursorDot === 'custom');
+        if (persist) localStorage.setItem('qiufeng-cursor-dot', state.cursorDot);
+    }
+
+    function setCustomCursorDot(color) {
+        if (!isHexColor(color)) return;
+        state.customCursorDot = color;
+        localStorage.setItem('qiufeng-cursor-dot-custom', color);
+        setCursorDot('custom');
     }
 
     function setTheme(theme, persist = true) {
@@ -357,6 +462,7 @@
     initPointerEffect();
     renderAccentOptions();
     renderEffectOptions();
+    renderCursorDotOptions();
 
     accentToggle.addEventListener('click', () => setAccentMenu(accentMenu.hidden));
     themeToggle.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
@@ -372,6 +478,13 @@
         if (option) setEffect(option.dataset.effect);
     });
     effectOptionsRoot.addEventListener('keydown', (event) => handleRadioKeydown(event, effectOptionsRoot, 'effect', setEffect));
+    cursorDotOptionsRoot.addEventListener('click', (event) => {
+        const option = event.target.closest('[data-cursor-dot]');
+        if (option) setCursorDot(option.dataset.cursorDot);
+    });
+    cursorDotOptionsRoot.querySelector('input[type="color"]').addEventListener('input', (event) => {
+        setCustomCursorDot(event.target.value);
+    });
     fallingEffectToggle.addEventListener('change', () => setEffectEnabled(fallingEffectToggle.checked));
     reducedMotionPreference.addEventListener('change', () => setEffectEnabled(state.effectEnabled, false));
     window.addEventListener('resize', () => {
@@ -391,6 +504,7 @@
     setAccent(state.accent, false);
     setEffect(state.effect, false);
     setEffectEnabled(state.effectEnabled, false);
+    setCursorDot(state.cursorDot, false);
 
     window.QiufengTheme = Object.freeze({
         reducedMotionPreference,
@@ -399,6 +513,7 @@
         setAccent,
         setEffect,
         setEffectEnabled,
+        setCursorDot,
         refreshFallingEffect: createFallingElements,
     });
 }());

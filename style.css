@@ -13,6 +13,10 @@
     --quiet-accent: #9ba7aa;
     --accent: #df8874;
     --accent-strong: #ee9984;
+    --cursor-dot-color: var(--accent-strong);
+    --cursor-dot-blend-color: var(--cursor-dot-color);
+    --cursor-dot-edge: rgba(15, 17, 16, 0.9);
+    --cursor-dot-outer-edge: rgba(243, 238, 231, 0.34);
     --success: #8eb69b;
     --danger: #d98a7e;
     --line: rgba(243, 238, 231, 0.14);
@@ -36,6 +40,8 @@
     --quiet-accent: #66777c;
     --accent: #a95042;
     --accent-strong: #913f34;
+    --cursor-dot-edge: rgba(255, 255, 255, 0.92);
+    --cursor-dot-outer-edge: rgba(36, 35, 33, 0.3);
     --success: #477257;
     --danger: #a95042;
     --line: rgba(36, 35, 33, 0.15);
@@ -122,7 +128,7 @@ svg {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--accent-strong);
+    background: var(--cursor-dot-blend-color, var(--cursor-dot-color, var(--accent-strong)));
     mix-blend-mode: difference;
     transition: opacity 120ms ease, background-color 180ms ease;
 }
@@ -609,6 +615,118 @@ svg {
 
 .effect-switch:has(input:disabled) {
     cursor: not-allowed;
+}
+
+.cursor-dot-setting {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 3px 7px;
+}
+
+.cursor-dot-setting-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-soft);
+    font-size: 14px;
+}
+
+.cursor-dot-setting-label svg {
+    width: 16px;
+    height: 16px;
+    color: var(--accent);
+}
+
+.cursor-dot-options {
+    display: grid;
+    grid-template-columns: repeat(8, 34px);
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.cursor-dot-option,
+.cursor-dot-custom {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 38px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.cursor-dot-option {
+    color: inherit;
+}
+
+.cursor-dot-option:hover,
+.cursor-dot-option:focus-visible,
+.cursor-dot-option[aria-pressed='true'],
+.cursor-dot-custom:hover,
+.cursor-dot-custom:focus-within,
+.cursor-dot-custom.is-selected {
+    background: var(--bg-deep);
+}
+
+.cursor-dot-swatch,
+.cursor-dot-custom input {
+    width: 19px;
+    height: 19px;
+    border: 2px solid var(--surface-raised);
+    border-radius: 50%;
+    background: var(--cursor-dot-swatch, var(--accent-strong));
+    box-shadow: 0 0 0 1px var(--line-strong);
+}
+
+.cursor-dot-option[aria-pressed='true'] .cursor-dot-swatch,
+.cursor-dot-custom.is-selected input {
+    box-shadow: 0 0 0 1px var(--text), 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.cursor-dot-option[data-cursor-dot='theme'] .cursor-dot-swatch::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 5px;
+    margin: 5px;
+    border-radius: 50%;
+    background: var(--bg-deep);
+}
+
+.cursor-dot-custom input {
+    padding: 0;
+    overflow: hidden;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.cursor-dot-custom input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.cursor-dot-custom input::-webkit-color-swatch {
+    border: 0;
+    border-radius: 50%;
+}
+
+.cursor-dot-custom input::-moz-color-swatch {
+    border: 0;
+    border-radius: 50%;
+}
+
+.cursor-dot-custom input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
 }
 
 .icon-button {
@@ -1970,6 +2088,22 @@ body.is-resizing {
         grid-template-columns: 70px minmax(0, 1fr) 44px;
         gap: 6px;
         padding-inline: 2px;
+    }
+
+    .cursor-dot-setting {
+        grid-template-columns: 70px minmax(0, 1fr);
+        gap: 6px;
+        padding-inline: 2px;
+    }
+
+    .cursor-dot-options {
+        grid-template-columns: repeat(4, 30px);
+        gap: 5px;
+    }
+
+    .cursor-dot-option,
+    .cursor-dot-custom {
+        width: 30px;
     }
 
     .effect-option {

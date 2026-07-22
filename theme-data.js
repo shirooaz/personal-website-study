@@ -11,6 +11,16 @@
         { id: 'bamboo', name: '竹叶', icon: 'sprout' },
     ];
 
+    const cursorDots = [
+        { id: 'theme', name: '跟随主题', color: null },
+        { id: 'frost', name: '霜白', color: '#f2eee7' },
+        { id: 'coral', name: '珊瑚', color: '#ee9984' },
+        { id: 'sky', name: '天青', color: '#8fb5c7' },
+        { id: 'bamboo', name: '青竹', color: '#93c39f' },
+        { id: 'plum', name: '浅梅', color: '#c6a2bd' },
+        { id: 'amber', name: '琥珀', color: '#dfb36e' },
+    ];
+
     const presets = [
         {
             id: 'coral',
@@ -147,8 +157,10 @@
     window.QiufengThemeData = Object.freeze({
         defaultAccent: 'coral',
         defaultEffect: 'petal',
+        defaultCursorDot: 'theme',
         groups,
         effects,
+        cursorDots,
         presets,
         pageColors: Object.freeze({ dark: '#151716', light: '#f3efe8' }),
     });
