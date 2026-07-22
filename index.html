@@ -41,6 +41,7 @@
 
             <div class="nav-links" id="navLinks">
                 <a href="#writing">文章</a>
+                <a href="#timeline">足迹</a>
                 <a href="#about">关于</a>
                 <a href="#guestbook">留言</a>
                 <a href="#contact">联系</a>
@@ -154,6 +155,27 @@
                 <div class="section-footer reveal">
                     <span id="postTotal">共 5 篇公开记录</span>
                     <span class="mono-note">持续更新中</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section timeline-preview-section" id="timeline" aria-labelledby="timelinePreviewTitle">
+            <div class="section-shell">
+                <header class="section-heading reveal">
+                    <p class="eyebrow">RECENT MOMENTS</p>
+                    <h2 id="timelinePreviewTitle">近来的足迹</h2>
+                    <div class="section-aside">
+                        <p>小站的变化，也包括生活里值得记下一笔的普通时刻。</p>
+                    </div>
+                </header>
+
+                <div class="timeline-preview-list" id="timelinePreviewList" aria-live="polite"></div>
+
+                <div class="section-footer reveal">
+                    <span id="timelinePreviewTotal">站点与日常，共同生长</span>
+                    <a class="timeline-all-link" href="timeline.html">
+                        查看完整纪事 <i data-lucide="arrow-right" aria-hidden="true"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -286,6 +308,7 @@
     <script src="theme-data.js"></script>
     <script src="theme-controls.js"></script>
     <script src="blog-data.js"></script>
+    <script src="timeline-data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

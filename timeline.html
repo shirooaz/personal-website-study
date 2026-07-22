@@ -3,33 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" id="metaDescription" content="秋枫清澄的文章。">
+    <meta name="description" content="秋枫清澄的站点纪事，记录网站生长、写作片段与日常小事。">
     <meta name="author" content="秋枫清澄">
-    <meta name="robots" id="robotsMeta" content="index, follow">
+    <meta name="robots" content="index, follow">
     <meta name="theme-color" id="themeColorMeta" content="#151716">
     <meta property="og:locale" content="zh_CN">
-    <meta property="og:type" content="article">
-    <meta property="og:title" id="ogTitle" content="文章 · 秋枫清澄">
-    <meta property="og:description" id="ogDescription" content="秋枫清澄的文章。">
-    <meta property="og:url" id="ogUrl" content="https://153904.xyz/article.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="站点纪事 · 秋枫清澄">
+    <meta property="og:description" content="记录网站生长、写作片段与日常小事。">
+    <meta property="og:url" content="https://153904.xyz/timeline.html">
     <meta property="og:image" content="https://153904.xyz/assets/avatar.jpg">
-    <meta property="og:image:alt" content="秋枫清澄的个人头像">
-    <meta property="article:published_time" id="articlePublishedTime" content="">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" id="twitterTitle" content="文章 · 秋枫清澄">
-    <meta name="twitter:description" id="twitterDescription" content="秋枫清澄的文章。">
-    <meta name="twitter:image" content="https://153904.xyz/assets/avatar.jpg">
-    <title>文章 · 秋枫清澄</title>
-    <link rel="canonical" id="canonicalUrl" href="https://153904.xyz/article.html">
+    <meta name="twitter:title" content="站点纪事 · 秋枫清澄">
+    <meta name="twitter:description" content="记录网站生长、写作片段与日常小事。">
+    <title>站点纪事 · 秋枫清澄</title>
+    <link rel="canonical" href="https://153904.xyz/timeline.html">
     <link rel="icon" type="image/jpeg" href="assets/avatar.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="article.css">
+    <link rel="stylesheet" href="timeline.css">
 </head>
-<body class="article-view">
-    <a class="skip-link" href="#main">跳到文章正文</a>
+<body class="timeline-view">
+    <a class="skip-link" href="#main">跳到时间轴</a>
     <div class="scroll-progress" aria-hidden="true"><span id="scrollProgress"></span></div>
     <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
     <span class="page-top-anchor" id="top" aria-hidden="true"></span>
@@ -43,7 +40,7 @@
 
             <div class="nav-links" id="navLinks">
                 <a href="index.html#writing">文章</a>
-                <a href="timeline.html">足迹</a>
+                <a href="timeline.html" aria-current="page">足迹</a>
                 <a href="index.html#about">关于</a>
                 <a href="index.html#guestbook">留言</a>
                 <a href="index.html#contact">联系</a>
@@ -75,41 +72,43 @@
         </nav>
     </header>
 
-    <main class="article-main" id="main">
-        <div class="article-loading" id="articleLoading" role="status">正在读取文章</div>
-
-        <article class="article-page" id="articlePage" hidden>
-            <a class="article-back" href="index.html#writing"><i data-lucide="arrow-left" aria-hidden="true"></i><span>返回文章列表</span></a>
-
-            <header class="article-header">
-                <div class="article-meta-line">
-                    <p class="article-entry-label">JOURNAL ENTRY <span id="articleIndex">01</span></p>
-                    <time id="articleDate"></time>
+    <main class="timeline-main" id="main">
+        <header class="timeline-hero section-shell reveal">
+            <div class="timeline-hero-index" aria-hidden="true">
+                <span>ARCHIVE</span>
+                <span id="timelineYearRange">2026</span>
+            </div>
+            <div class="timeline-hero-copy">
+                <p class="eyebrow">SITE &amp; LIFE LOG</p>
+                <h1>站点纪事</h1>
+                <p>不只记录版本更新，也收下写作、见闻和那些值得记住的小事情。</p>
+            </div>
+            <dl class="timeline-stats" aria-label="时间轴概况">
+                <div>
+                    <dt>记录</dt>
+                    <dd id="timelineCount">0</dd>
                 </div>
-                <div class="article-tags" id="articleTags" aria-label="文章标签"></div>
-                <h1 id="articleTitle"></h1>
-                <p class="article-dek" id="articleExcerpt"></p>
-            </header>
+                <div>
+                    <dt>始于</dt>
+                    <dd id="timelineSince">—</dd>
+                </div>
+            </dl>
+        </header>
 
-            <div class="article-content" id="articleContent"></div>
-
-            <nav class="article-neighbors" aria-label="相邻文章">
-                <a class="article-neighbor article-newer" id="articleNewer" href="#" hidden>
-                    <span><i data-lucide="arrow-left" aria-hidden="true"></i>较新一篇</span>
-                    <strong id="articleNewerTitle"></strong>
-                </a>
-                <a class="article-neighbor article-older" id="articleOlder" href="#" hidden>
-                    <span>较早一篇<i data-lucide="arrow-right" aria-hidden="true"></i></span>
-                    <strong id="articleOlderTitle"></strong>
-                </a>
-            </nav>
-        </article>
-
-        <section class="article-not-found" id="articleNotFound" hidden aria-labelledby="notFoundTitle">
-            <p class="eyebrow">404 · JOURNAL ENTRY</p>
-            <h1 id="notFoundTitle">没有找到这篇文章</h1>
-            <p>链接可能已经失效，或者文章 ID 不存在。</p>
-            <a class="button button-primary" href="index.html#writing">返回文章列表<i data-lucide="arrow-left" aria-hidden="true"></i></a>
+        <section class="timeline-content section-shell" aria-labelledby="timelineListTitle">
+            <h2 class="visually-hidden" id="timelineListTitle">全部时间记录</h2>
+            <div class="timeline-tools reveal">
+                <div class="timeline-filter" id="timelineFilters" role="group" aria-label="筛选时间记录"></div>
+                <nav class="timeline-years" id="timelineYears" aria-label="按年份查看"></nav>
+            </div>
+            <div class="timeline-track" id="timelineTrack">
+                <div class="timeline-axis" id="timelineAxis" aria-hidden="true">
+                    <span class="timeline-axis-progress" id="timelineAxisProgress">
+                        <span class="timeline-axis-head"></span>
+                    </span>
+                </div>
+                <div class="timeline-list" id="timelineList" aria-live="polite"></div>
+            </div>
         </section>
     </main>
 
@@ -120,11 +119,10 @@
         </div>
     </footer>
 
-    <script id="articleStructuredData" type="application/ld+json">{}</script>
     <script src="assets/lucide.min.js"></script>
     <script src="theme-data.js"></script>
     <script src="theme-controls.js"></script>
-    <script src="blog-data.js"></script>
-    <script src="article.js"></script>
+    <script src="timeline-data.js"></script>
+    <script src="timeline.js"></script>
 </body>
 </html>

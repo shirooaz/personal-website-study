@@ -1,6 +1,6 @@
 # 秋枫清澄个人主页
 
-这是一个无需构建工具即可部署到 Cloudflare Pages 的静态个人站点。主页提供个人介绍、文章搜索、标签筛选、显示篇数控制和留言板；`article.html` 负责独立文章阅读。
+这是一个无需构建工具即可部署到 Cloudflare Pages 的静态个人站点。主页提供个人介绍、文章搜索、标签筛选、时间轴预览、显示篇数控制和留言板；`article.html` 负责独立文章阅读，`timeline.html` 用于记录网站节点与生活片段。
 
 ## 核心原则
 
@@ -54,6 +54,10 @@ script.js        主页渲染与交互
 article.js       阅读页渲染与交互
 style.css        全站基础样式与主题变量
 article.css      阅读页专用样式
+timeline.html    站点与生活时间轴页面
+timeline-data.js 时间轴的唯一数据源
+timeline.js      时间轴筛选、分组与交互
+timeline.css     时间轴页面专用样式
 assets/          本地头像与图标脚本
 ```
 
@@ -65,8 +69,12 @@ blog-data.js ──> script.js  ──> index.html 的文章列表、搜索和�
 
 theme-data.js ──> theme-controls.js ──> 两个页面的主题面板、配色与下落动效
 
-style.css ────────────────> 两个页面的公共视觉与交互样式
+timeline-data.js ──> script.js   ──> index.html 的最近足迹
+                 └─> timeline.js ──> timeline.html 的年份分组和分类筛选
+
+style.css ────────────────> 三个页面的公共视觉与交互样式
 article.css ──────────────> 阅读页排版
+timeline.css ─────────────> 时间轴页排版
 ```
 
 ## 主要功能
@@ -75,6 +83,7 @@ article.css ──────────────> 阅读页排版
 - 标签筛选：根据全部文章的 `tags` 自动生成。
 - 显示篇数：滑动条上限随当前筛选结果自动变化。
 - 独立文章页：固定链接、分享元数据、结构化数据和相邻文章导航。
+- 站点纪事：通过左侧连续纵轴按年份展示小站、生活、写作与里程碑事件；滚动时轴线与当前节点会依次点亮，并支持分类筛选。
 - 主题设置：明暗模式和多种强调色，选择会保存在浏览器中。
 - 下落动效：花瓣、枫叶和竹叶，可关闭，并适配减少动态效果偏好。
 - 主题指针：精确鼠标设备显示主题色跟随圆环，进入文字、图片和交互元素时增强主题色边缘；触屏、文本输入和减少动态效果模式保持原生指针。
@@ -106,6 +115,10 @@ article.css ──────────────> 阅读页排版
 - 首页结构、导航、介绍和社交链接位于 `index.html`。
 - 打字机文字及节奏位于 `script.js` 的 `initTypingEffect()`。
 - 阅读页公共导航和页脚位于 `article.html`。
+
+### 添加时间记录
+
+在 `timeline-data.js` 的 `timelineEvents` 数组中增加对象。必填字段为稳定的 `id`、`date`、`category`、`title` 和 `summary`；可选字段包括 `version`、`details`、`link` 与 `featured`。`category` 当前支持 `site`、`daily`、`writing` 和 `milestone`。首页自动显示最新三条，完整页面自动按年份倒序分组。
 
 ## 留言板数据流
 

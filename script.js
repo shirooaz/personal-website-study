@@ -16,6 +16,8 @@ const searchClear = document.getElementById('searchClear');
 const postCountRange = document.getElementById('postCountRange');
 const postCountOutput = document.getElementById('postCountOutput');
 const postTotal = document.getElementById('postTotal');
+const timelinePreviewList = document.getElementById('timelinePreviewList');
+const timelinePreviewTotal = document.getElementById('timelinePreviewTotal');
 const messageForm = document.getElementById('messageForm');
 const messageName = document.getElementById('messageName');
 const messageContent = document.getElementById('messageContent');
@@ -81,6 +83,60 @@ function formatDate(dateString) {
 
 function getArticleUrl(postId) {
     return `article.html?id=${encodeURIComponent(postId)}`;
+}
+
+function renderTimelinePreview() {
+    if (!timelinePreviewList) return;
+    const events = Array.isArray(window.timelineEvents)
+        ? [...window.timelineEvents].sort((left, right) => right.date.localeCompare(left.date))
+        : [];
+
+    timelinePreviewList.replaceChildren();
+    if (events.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'timeline-preview-empty';
+        empty.textContent = '新的记录会从这里开始。';
+        timelinePreviewList.appendChild(empty);
+        return;
+    }
+
+    const categoryLabels = {
+        site: '小站',
+        daily: '日常',
+        writing: '写作',
+        milestone: '里程碑',
+    };
+
+    events.slice(0, 3).forEach((event, index) => {
+        const row = document.createElement('a');
+        row.className = 'timeline-preview-row reveal';
+        row.href = `timeline.html#${encodeURIComponent(event.id)}`;
+
+        const date = document.createElement('time');
+        date.dateTime = event.date;
+        date.textContent = formatDate(event.date);
+
+        const copy = document.createElement('span');
+        copy.className = 'timeline-preview-copy';
+        const meta = document.createElement('span');
+        meta.className = 'timeline-preview-meta';
+        meta.textContent = [categoryLabels[event.category] || '记录', event.version].filter(Boolean).join(' / ');
+        const title = document.createElement('strong');
+        title.textContent = event.title;
+        copy.append(meta, title);
+
+        const number = document.createElement('span');
+        number.className = 'timeline-preview-number';
+        number.textContent = String(index + 1).padStart(2, '0');
+        number.setAttribute('aria-hidden', 'true');
+
+        row.append(date, copy, number);
+        timelinePreviewList.appendChild(row);
+    });
+
+    if (timelinePreviewTotal) timelinePreviewTotal.textContent = `共 ${events.length} 条公开足迹`;
+    refreshIcons();
+    initReveal();
 }
 
 function setCurrentYear() {
@@ -621,6 +677,7 @@ window.addEventListener('resize', () => {
 setCurrentYear();
 initTypingEffect();
 renderPosts();
+renderTimelinePreview();
 redirectLegacyArticleUrl();
 updateMessageCount();
 loadMessages();
