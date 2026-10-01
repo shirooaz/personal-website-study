@@ -13,17 +13,67 @@
     <meta property="og:description" content="记录网站生长、写作片段与日常小事。">
     <meta property="og:url" content="https://153904.xyz/timeline.html">
     <meta property="og:image" content="https://153904.xyz/assets/avatar.jpg">
+    <meta property="og:image:alt" content="秋枫清澄的个人头像">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="站点纪事 · 秋枫清澄">
     <meta name="twitter:description" content="记录网站生长、写作片段与日常小事。">
+    <meta name="twitter:image" content="https://153904.xyz/assets/avatar.jpg">
     <title>站点纪事 · 秋枫清澄</title>
     <link rel="canonical" href="https://153904.xyz/timeline.html">
-    <link rel="icon" type="image/jpeg" href="assets/avatar.jpg">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap">
+    </noscript>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="timeline.css">
+    <script src="theme-data.js"></script>
+    <script>
+        // 首屏主题引导：见 index.html 中的说明
+        (function () {
+            var root = document.documentElement;
+            root.classList.add('js', 'no-transition');
+
+            var theme = '';
+            var accent = '';
+            try {
+                theme = localStorage.getItem('qiufeng-theme') || '';
+                accent = localStorage.getItem('qiufeng-accent') || '';
+            } catch (error) {
+                /* 存储不可用时退回系统偏好 */
+            }
+
+            if (theme !== 'light' && theme !== 'dark') {
+                theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+            root.dataset.theme = theme;
+
+            var data = window.QiufengThemeData;
+            var preset = data ? data.presets.filter(function (item) { return item.id === accent; })[0] : null;
+            if (preset) {
+                root.dataset.accent = preset.id;
+                root.style.setProperty('--accent', preset[theme].accent);
+                root.style.setProperty('--accent-strong', preset[theme].accentStrong);
+            }
+
+            var themeColorMeta = document.getElementById('themeColorMeta');
+            if (themeColorMeta && data) themeColorMeta.content = data.pageColors[theme];
+
+            document.addEventListener('DOMContentLoaded', function () {
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        root.classList.remove('no-transition');
+                    });
+                });
+            });
+            window.setTimeout(function () { root.classList.remove('no-transition'); }, 1200);
+        }());
+    </script>
 </head>
 <body class="timeline-view">
     <a class="skip-link" href="#main">跳到时间轴</a>
@@ -75,6 +125,10 @@
     </header>
 
     <main class="timeline-main" id="main">
+        <noscript>
+            <p class="noscript-note">时间轴记录由 JavaScript 渲染。请在浏览器中启用 JavaScript 后再打开本页。</p>
+        </noscript>
+
         <header class="timeline-hero section-shell reveal">
             <div class="timeline-hero-index" aria-hidden="true">
                 <span>ARCHIVE</span>
@@ -121,8 +175,8 @@
         </div>
     </footer>
 
-    <script src="assets/lucide.min.js"></script>
-    <script src="theme-data.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="assets/icons.js"></script>
     <script src="theme-controls.js"></script>
     <script src="timeline-data.js"></script>
     <script src="timeline.js"></script>

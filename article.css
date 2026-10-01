@@ -1,5 +1,6 @@
 .article-view {
     min-height: 100vh;
+    min-height: 100svh;
 }
 
 .article-loading[hidden],
@@ -11,6 +12,7 @@
 
 .article-main {
     min-height: calc(100vh - 88px);
+    min-height: calc(100svh - 88px);
     padding: 128px 0 112px;
 }
 

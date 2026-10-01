@@ -20,11 +20,61 @@
     <meta name="twitter:image" content="https://153904.xyz/assets/avatar.jpg">
     <title>秋枫清澄 · 个人博客</title>
     <link rel="canonical" href="https://153904.xyz/">
-    <link rel="icon" type="image/jpeg" href="assets/avatar.jpg">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <!-- 字体样式表改为异步加载：不再阻塞首屏渲染；无 JS 时走 noscript 分支 -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap">
+    </noscript>
     <link rel="stylesheet" href="style.css">
+    <script src="theme-data.js"></script>
+    <script>
+        // 首屏主题引导：在内容绘制前套用已保存的明暗模式与强调色，并暂时关闭过渡动画，避免"先暗后亮"的闪烁
+        (function () {
+            var root = document.documentElement;
+            root.classList.add('js', 'no-transition');
+
+            var theme = '';
+            var accent = '';
+            try {
+                theme = localStorage.getItem('qiufeng-theme') || '';
+                accent = localStorage.getItem('qiufeng-accent') || '';
+            } catch (error) {
+                /* 存储不可用时退回系统偏好 */
+            }
+
+            if (theme !== 'light' && theme !== 'dark') {
+                theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+            root.dataset.theme = theme;
+
+            var data = window.QiufengThemeData;
+            var preset = data ? data.presets.filter(function (item) { return item.id === accent; })[0] : null;
+            if (preset) {
+                root.dataset.accent = preset.id;
+                root.style.setProperty('--accent', preset[theme].accent);
+                root.style.setProperty('--accent-strong', preset[theme].accentStrong);
+            }
+
+            var themeColorMeta = document.getElementById('themeColorMeta');
+            if (themeColorMeta && data) themeColorMeta.content = data.pageColors[theme];
+
+            document.addEventListener('DOMContentLoaded', function () {
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        root.classList.remove('no-transition');
+                    });
+                });
+            });
+            // 保底：即使上面的事件没有触发也恢复过渡
+            window.setTimeout(function () { root.classList.remove('no-transition'); }, 1200);
+        }());
+    </script>
 </head>
 <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -85,12 +135,23 @@
     </header>
 
     <main id="main">
+        <noscript>
+            <p class="noscript-note">文章列表、搜索、时间轴与留言板需要 JavaScript 才能显示。页面的介绍与联系方式不受影响。</p>
+        </noscript>
+
         <section class="hero" aria-labelledby="heroTitle">
-            <img
-                class="hero-image"
-                src="assets/avatar.jpg"
-                alt="秋枫清澄的个人头像"
-            >
+            <picture>
+                <source srcset="assets/avatar.webp" type="image/webp">
+                <img
+                    class="hero-image"
+                    src="assets/avatar.jpg"
+                    alt="秋枫清澄的个人头像"
+                    width="850"
+                    height="850"
+                    decoding="async"
+                    fetchpriority="high"
+                >
+            </picture>
             <div class="hero-overlay" aria-hidden="true"></div>
             <div class="hero-grain" aria-hidden="true"></div>
 
@@ -137,10 +198,10 @@
                 </header>
 
                 <div class="search-shell reveal">
-                    <span class="search-label">搜索</span>
+                    <span class="search-label" aria-hidden="true">搜索</span>
                     <label class="search-field" for="articleSearch">
                         <i data-lucide="search" aria-hidden="true"></i>
-                        <input id="articleSearch" type="search" placeholder="搜索标题、正文或标签" autocomplete="off">
+                        <input id="articleSearch" type="search" placeholder="搜索标题、正文或标签" aria-label="搜索文章" autocomplete="off">
                         <button id="searchClear" type="button" aria-label="清除搜索" title="清除搜索" hidden>
                             <i data-lucide="x" aria-hidden="true"></i>
                         </button>
@@ -148,11 +209,12 @@
                 </div>
 
                 <div class="tag-filter-shell reveal">
-                    <span class="tag-filter-label">标签</span>
+                    <span class="tag-filter-label" aria-hidden="true">标签</span>
                     <div class="tag-filters" id="tagFilters" role="group" aria-label="按标签筛选文章"></div>
                 </div>
 
-                <div class="post-list" id="postList" aria-live="polite"></div>
+                <p class="visually-hidden" id="postListStatus" role="status" aria-live="polite"></p>
+                <div class="post-list" id="postList"></div>
 
                 <div class="section-footer reveal">
                     <span id="postTotal">共 5 篇公开记录</span>
@@ -306,8 +368,8 @@
         </div>
     </footer>
 
-    <script src="assets/lucide.min.js"></script>
-    <script src="theme-data.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="assets/icons.js"></script>
     <script src="theme-controls.js"></script>
     <script src="blog-data.js"></script>
     <script src="timeline-data.js"></script>

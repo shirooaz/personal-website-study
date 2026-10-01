@@ -14,7 +14,11 @@ CREATE TABLE IF NOT EXISTS articles (
   updated_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE VIRTUAL TABLE IF NOT EXISTS article_fts USING fts5(title, content);
+-- 分词器改用 trigram：默认的 unicode61 会把一整串连续汉字当成一个 token，
+-- 搜"留言"匹配不到"留言板上线"，中文基本用不了。trigram 支持任意子串命中
+-- （需要 SQLite >= 3.34，D1 已满足）。
+-- 若库中已有旧索引，需要先 DROP TABLE article_fts 再重新执行本文件以重建。
+CREATE VIRTUAL TABLE IF NOT EXISTS article_fts USING fts5(title, content, tokenize = 'trigram');
 
 -- 数据变更时自动同步 FTS
 CREATE TRIGGER IF NOT EXISTS articles_ai AFTER INSERT ON articles BEGIN

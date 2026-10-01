@@ -408,6 +408,39 @@ label,
   box-shadow: 2px 2px 0 var(--copper);
 }
 
+.state-actions {
+  display: grid;
+  gap: 14px;
+}
+
+.state-actions .command-button {
+  width: 100%;
+}
+
+.site-back-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  padding-bottom: 2px;
+  color: inherit;
+  opacity: 0.68;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: opacity 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.site-back-link:hover,
+.site-back-link:focus-visible {
+  color: var(--copper);
+  border-bottom-color: var(--copper);
+  opacity: 1;
+  outline: 2px solid var(--copper);
+  outline-offset: 3px;
+}
+
 .modal-state {
   inset: 50% auto auto 50%;
   width: min(370px, calc(100% - 32px));
@@ -917,10 +950,13 @@ label,
             <h1 id="gameTitle">飞八分钱</h1>
             <p>穿过废墟，凑满八分。</p>
           </div>
-          <button class="command-button command-button--primary" id="startButton" type="button">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
-            <span>开局</span>
-          </button>
+          <div class="state-actions">
+            <button class="command-button command-button--primary" id="startButton" type="button">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+              <span>开局</span>
+            </button>
+            <a class="site-back-link" href="index.html">返回小站</a>
+          </div>
         </section>
 
         <section class="state-overlay modal-state" id="pauseOverlay" aria-labelledby="pauseTitle" hidden>
@@ -950,6 +986,7 @@ label,
             </svg>
             <span>再飞一次</span>
           </button>
+          <a class="site-back-link" href="index.html">返回小站</a>
         </section>
 
         <section class="state-overlay error-state" id="errorOverlay" role="alert" hidden>
@@ -3431,7 +3468,9 @@ label,
         theme: ['ruins', 'newsprint', 'night'].includes(parsed.theme) ? parsed.theme : fallback.theme,
         difficulty: ['calm', 'standard', 'fast'].includes(parsed.difficulty) ? parsed.difficulty : fallback.difficulty,
         grain: typeof parsed.grain === 'boolean' ? parsed.grain : fallback.grain,
-        lowMotion: typeof parsed.lowMotion === 'boolean' ? parsed.lowMotion : fallback.lowMotion
+        lowMotion: typeof parsed.lowMotion === 'boolean' ? parsed.lowMotion : fallback.lowMotion,
+        // 只有存过 lowMotion 才说明用户手动动过开关，否则跟随系统偏好。
+        lowMotionOverride: typeof parsed.lowMotion === 'boolean'
       };
     } catch (error) {
       return fallback;
@@ -3440,7 +3479,16 @@ label,
 
   function safeWriteSettings(settings) {
     try {
-      global.localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      var payload = {
+        theme: settings.theme,
+        difficulty: settings.difficulty,
+        grain: settings.grain
+      };
+      // 低动效只有在用户显式切换过开关时才落盘，避免覆盖系统偏好。
+      if (settings.lowMotionOverride) {
+        payload.lowMotion = settings.lowMotion;
+      }
+      global.localStorage.setItem(SETTINGS_KEY, JSON.stringify(payload));
     } catch (error) {
       // Settings remain active for this page session.
     }
@@ -3450,14 +3498,29 @@ label,
     return String(Math.max(0, Math.floor(value))).padStart(2, '0');
   }
 
+  function showStartupError(message) {
+    var errorOverlay = document.querySelector('#errorOverlay');
+    var readyOverlay = document.querySelector('#readyOverlay');
+    var errorCopy = errorOverlay ? errorOverlay.querySelector('.state-copy p') : null;
+
+    if (errorCopy && message) {
+      errorCopy.textContent = message;
+    }
+    if (readyOverlay) {
+      readyOverlay.hidden = true;
+    }
+    if (errorOverlay) {
+      errorOverlay.hidden = false;
+    }
+  }
+
   function initialize() {
     var engineApi = global.F8FQEngine;
     var visualsApi = global.F8FQVisuals;
     var audioApi = global.F8FQAudio;
-    var errorOverlay = document.querySelector('#errorOverlay');
 
     if (!engineApi || !visualsApi || !audioApi || !global.requestAnimationFrame) {
-      errorOverlay.hidden = false;
+      showStartupError('当前浏览器缺少游戏所需功能，请更新浏览器后重试。');
       return;
     }
 
@@ -3494,7 +3557,8 @@ label,
       theme: 'ruins',
       difficulty: 'standard',
       grain: true,
-      lowMotion: mediaReducedMotion.matches
+      lowMotion: mediaReducedMotion.matches,
+      lowMotionOverride: false
     });
     var best = safeReadNumber(BEST_KEY);
     var seed = 0x8f3c2a1d;
@@ -3503,13 +3567,21 @@ label,
       best: best,
       difficulty: settings.difficulty
     });
-    var renderer = visualsApi.create(canvas);
+
+    var renderer;
+    try {
+      renderer = visualsApi.create(canvas);
+    } catch (renderError) {
+      // Canvas 2D 不可用时 create() 会抛错，这里退回错误浮层而不是静默白屏。
+      showStartupError('渲染器初始化失败，请更新或更换浏览器后重试。');
+      return;
+    }
+
     var audio = audioApi.create();
     var accumulator = 0;
     var lastFrameTime = global.performance.now();
     var frameRequest = 0;
     var destroyed = false;
-    var hasSized = false;
     var pausedForTweaks = false;
     var isTweaksOpen = false;
 
@@ -3520,7 +3592,7 @@ label,
       });
     }
 
-    function applySettings() {
+    function applySettings(persist) {
       gameShell.dataset.theme = settings.theme;
       renderer.setTheme(settings.theme);
       renderer.setGrain(settings.grain);
@@ -3534,7 +3606,20 @@ label,
       difficultyInputs.forEach(function syncDifficulty(input) {
         input.checked = input.value === settings.difficulty;
       });
-      safeWriteSettings(settings);
+      if (persist) {
+        safeWriteSettings(settings);
+      }
+    }
+
+    // 跟随系统「减弱动效」偏好：用户没手动改过开关时实时同步，且不写入本地存储。
+    function handleReducedMotionChange(event) {
+      if (settings.lowMotionOverride) {
+        return;
+      }
+      settings.lowMotion = event && typeof event.matches === 'boolean'
+        ? event.matches
+        : mediaReducedMotion.matches;
+      applySettings();
     }
 
     function updateMuteButton() {
@@ -3716,22 +3801,29 @@ label,
       }
     }
 
-    function handleVisibilityChange() {
-      if (document.hidden && engine.getSnapshot().state === 'playing') {
+    function pauseIfPlaying() {
+      if (engine.getSnapshot().state === 'playing') {
         engine.pause();
         drainEvents();
       }
     }
 
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        pauseIfPlaying();
+      }
+    }
+
+    // Alt-Tab 到其他应用时 document.hidden 可能仍为 false，所以额外监听窗口失焦。
+    function handleWindowBlur() {
+      pauseIfPlaying();
+    }
+
     function handleResize() {
       var rect = playfield.getBoundingClientRect();
       var dpr = Math.min(global.devicePixelRatio || 1, 2);
+      // 只重算尺寸/重绘，不再打断对局：移动端地址栏收放、软键盘弹出都会触发这里。
       renderer.resize(Math.max(1, rect.width), Math.max(1, rect.height), dpr);
-      if (hasSized && engine.getSnapshot().state === 'playing') {
-        engine.pause();
-        drainEvents();
-      }
-      hasSized = true;
     }
 
     function frame(now) {
@@ -3759,6 +3851,7 @@ label,
     canvas.addEventListener('pointerdown', handleCanvasPointer, { passive: false });
     global.addEventListener('keydown', handleKeydown);
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    global.addEventListener('blur', handleWindowBlur);
 
     muteButton.addEventListener('click', function handleMuteClick() {
       unlockAudio();
@@ -3772,23 +3865,24 @@ label,
       input.addEventListener('change', function changeTheme() {
         if (!input.checked) return;
         settings.theme = input.value;
-        applySettings();
+        applySettings(true);
       });
     });
     difficultyInputs.forEach(function bindDifficulty(input) {
       input.addEventListener('change', function changeDifficulty() {
         if (!input.checked) return;
         settings.difficulty = input.value;
-        applySettings();
+        applySettings(true);
       });
     });
     grainToggle.addEventListener('change', function changeGrain() {
       settings.grain = grainToggle.checked;
-      applySettings();
+      applySettings(true);
     });
     motionToggle.addEventListener('change', function changeMotion() {
       settings.lowMotion = motionToggle.checked;
-      applySettings();
+      settings.lowMotionOverride = true;
+      applySettings(true);
     });
 
     comboBanner.addEventListener('animationend', function clearCombo() {
@@ -3802,6 +3896,11 @@ label,
     } else {
       global.addEventListener('resize', handleResize);
     }
+    if (typeof mediaReducedMotion.addEventListener === 'function') {
+      mediaReducedMotion.addEventListener('change', handleReducedMotionChange);
+    } else if (typeof mediaReducedMotion.addListener === 'function') {
+      mediaReducedMotion.addListener(handleReducedMotionChange);
+    }
     applySettings();
     updateMuteButton();
     updateUi(engine.getSnapshot());
@@ -3813,6 +3912,13 @@ label,
       global.cancelAnimationFrame(frameRequest);
       if (resizeObserver) resizeObserver.disconnect();
       else global.removeEventListener('resize', handleResize);
+      global.removeEventListener('blur', handleWindowBlur);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (typeof mediaReducedMotion.removeEventListener === 'function') {
+        mediaReducedMotion.removeEventListener('change', handleReducedMotionChange);
+      } else if (typeof mediaReducedMotion.removeListener === 'function') {
+        mediaReducedMotion.removeListener(handleReducedMotionChange);
+      }
       renderer.destroy();
       audio.destroy();
     }, { once: true });

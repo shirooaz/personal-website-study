@@ -21,12 +21,60 @@
     <meta name="twitter:image" content="https://153904.xyz/assets/avatar.jpg">
     <title>文章 · 秋枫清澄</title>
     <link rel="canonical" id="canonicalUrl" href="https://153904.xyz/article.html">
-    <link rel="icon" type="image/jpeg" href="assets/avatar.jpg">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=LXGW+WenKai:wght@400;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap">
+    </noscript>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="article.css">
+    <script src="theme-data.js"></script>
+    <script>
+        // 首屏主题引导：见 index.html 中的说明
+        (function () {
+            var root = document.documentElement;
+            root.classList.add('js', 'no-transition');
+
+            var theme = '';
+            var accent = '';
+            try {
+                theme = localStorage.getItem('qiufeng-theme') || '';
+                accent = localStorage.getItem('qiufeng-accent') || '';
+            } catch (error) {
+                /* 存储不可用时退回系统偏好 */
+            }
+
+            if (theme !== 'light' && theme !== 'dark') {
+                theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+            root.dataset.theme = theme;
+
+            var data = window.QiufengThemeData;
+            var preset = data ? data.presets.filter(function (item) { return item.id === accent; })[0] : null;
+            if (preset) {
+                root.dataset.accent = preset.id;
+                root.style.setProperty('--accent', preset[theme].accent);
+                root.style.setProperty('--accent-strong', preset[theme].accentStrong);
+            }
+
+            var themeColorMeta = document.getElementById('themeColorMeta');
+            if (themeColorMeta && data) themeColorMeta.content = data.pageColors[theme];
+
+            document.addEventListener('DOMContentLoaded', function () {
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        root.classList.remove('no-transition');
+                    });
+                });
+            });
+            window.setTimeout(function () { root.classList.remove('no-transition'); }, 1200);
+        }());
+    </script>
 </head>
 <body class="article-view">
     <a class="skip-link" href="#main">跳到文章正文</a>
@@ -78,6 +126,10 @@
     </header>
 
     <main class="article-main" id="main">
+        <noscript>
+            <p class="noscript-note">文章正文由 JavaScript 渲染。请在浏览器中启用 JavaScript 后再打开本页。</p>
+        </noscript>
+
         <div class="article-loading" id="articleLoading" role="status">正在读取文章</div>
 
         <article class="article-page" id="articlePage" hidden>
@@ -123,8 +175,8 @@
     </footer>
 
     <script id="articleStructuredData" type="application/ld+json">{}</script>
-    <script src="assets/lucide.min.js"></script>
-    <script src="theme-data.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="assets/icons.js"></script>
     <script src="theme-controls.js"></script>
     <script src="blog-data.js"></script>
     <script src="article.js"></script>

@@ -9,10 +9,16 @@ id = "b771e3e02029413aad066a86f59ed4e7"
 [[d1_databases]]
 binding = "ARTICLES_DB"
 database_name = "articles-db"
-database_id = "PLACEHOLDER"  # wrangler d1 create articles-db 后替换
+# 仍是占位符：在替换为真实 database_id 之前，/api/articles* 会直接抛错，
+# 而前端目前也只用 /api/messages —— 也就是这套文章接口尚未投入使用。
+# 要么 `wrangler d1 create articles-db` 后填入真实 id 并让它变成文章数据源，
+# 要么删掉这一段与 schema.sql，避免与 blog-data.js 形成两份"文章真相"。
+database_id = "PLACEHOLDER"
 
 [vars]
 ALLOWED_ORIGIN = "https://153904.xyz"
+# ADMIN_TOKEN 不写在这里，用 `wrangler secret put ADMIN_TOKEN` 配置。
+# 未配置时 checkAuth 一律返回 false（写接口全部拒绝）。
 
 [[routes]]
 pattern = "api.153904.xyz/*"

@@ -1,5 +1,6 @@
 .timeline-view {
     min-height: 100vh;
+    min-height: 100svh;
     background: var(--bg);
 }
 
@@ -219,7 +220,8 @@
     max-height: 100%;
     background: var(--accent);
     box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 32%, transparent);
-    transition: height 180ms linear, background-color 180ms ease;
+    /* 高度由脚本每个滚动帧写入，再加过渡只会让进度条始终滞后，这里只保留颜色过渡 */
+    transition: background-color 180ms ease;
 }
 
 .timeline-axis-head {
@@ -243,7 +245,8 @@
 
 .timeline-year-group {
     position: relative;
-    scroll-margin-top: 104px;
+    /* 跟随 --header-height，移动端变 64px 时偏移同步 */
+    scroll-margin-top: calc(var(--header-height) + 32px);
 }
 
 .timeline-year-group + .timeline-year-group {
@@ -305,7 +308,7 @@
     position: relative;
     min-width: 0;
     min-height: 188px;
-    scroll-margin-top: 104px;
+    scroll-margin-top: calc(var(--header-height) + 32px);
 }
 
 .timeline-event-marker {

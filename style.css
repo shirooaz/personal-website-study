@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     color-scheme: dark;
     --font-display: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
     --font-main: 'LXGW WenKai', '霞鹜文楷', 'Noto Serif SC', serif;
@@ -13,10 +13,11 @@
     --quiet-accent: #9ba7aa;
     --accent: #df8874;
     --accent-strong: #ee9984;
+    /* 强调色底上的前景色：亮色强调色配深色文字，浅色主题下自动换成近白色 */
+    --on-accent: #1a1918;
+    --on-accent-line: rgba(26, 25, 24, 0.34);
     --cursor-dot-color: var(--accent-strong);
     --cursor-dot-blend-color: var(--cursor-dot-color);
-    --cursor-dot-edge: rgba(15, 17, 16, 0.9);
-    --cursor-dot-outer-edge: rgba(243, 238, 231, 0.34);
     --success: #8eb69b;
     --danger: #d98a7e;
     --line: rgba(243, 238, 231, 0.14);
@@ -36,12 +37,12 @@
     --surface-raised: #ffffff;
     --text: #242321;
     --text-soft: #58544f;
-    --text-muted: #7d7973;
-    --quiet-accent: #66777c;
+    --text-muted: #65615c;
+    --quiet-accent: #5a6a6f;
     --accent: #a95042;
     --accent-strong: #913f34;
-    --cursor-dot-edge: rgba(255, 255, 255, 0.92);
-    --cursor-dot-outer-edge: rgba(36, 35, 33, 0.3);
+    --on-accent: #fdfaf6;
+    --on-accent-line: rgba(253, 250, 246, 0.4);
     --success: #477257;
     --danger: #a95042;
     --line: rgba(36, 35, 33, 0.15);
@@ -101,7 +102,7 @@ svg {
 
 ::selection {
     background: var(--accent);
-    color: #171716;
+    color: var(--on-accent);
 }
 
 :focus-visible {
@@ -139,6 +140,7 @@ svg {
     height: 30px;
     border: 1px solid var(--accent-strong);
     border-radius: 50%;
+    background: transparent;
     background: color-mix(in srgb, var(--accent) 3%, transparent);
     opacity: 0;
     transition:
@@ -235,6 +237,30 @@ svg {
     border: 0;
 }
 
+/* 没有 JS 时不要让 .reveal 把整段内容锁在 opacity:0。
+   <html> 上的 js 类由各页头部的内联脚本同步加上。 */
+html:not(.js) .reveal {
+    opacity: 1;
+    transform: none;
+}
+
+/* 首屏主题引导期间关闭过渡，避免"先按默认色绘制再过渡到用户配色"的闪烁 */
+html.no-transition *,
+html.no-transition *::before,
+html.no-transition *::after {
+    transition: none !important;
+}
+
+.noscript-note {
+    margin: 0;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-soft);
+    font-size: 15px;
+    text-align: center;
+}
+
 .page-top-anchor {
     position: absolute;
     top: 0;
@@ -253,9 +279,11 @@ svg {
 
 .scroll-progress span {
     display: block;
-    width: 0;
+    width: 100%;
     height: 100%;
     background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
 }
 
 .petal-layer {
@@ -273,8 +301,11 @@ svg {
     left: var(--petal-left);
     width: var(--petal-size);
     height: var(--petal-height);
+    /* 不支持 color-mix() 的浏览器回退为纯色 */
+    border: 1px solid var(--fall-color, var(--accent));
     border: 1px solid color-mix(in srgb, var(--fall-color, var(--accent)) 70%, transparent);
     border-radius: 72% 20% 72% 20%;
+    background: var(--fall-color, var(--accent));
     background: color-mix(in srgb, var(--fall-color, var(--accent)) 78%, var(--text) 22%);
     box-shadow: 0 3px 9px color-mix(in srgb, var(--fall-color, var(--accent)) 18%, transparent);
     opacity: var(--petal-opacity);
@@ -315,6 +346,7 @@ svg {
 .site-header.is-scrolled {
     background: var(--header-bg);
     border-color: var(--line);
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
 }
 
@@ -612,6 +644,7 @@ svg {
 
 .effect-switch input:checked + .effect-switch-track {
     border-color: var(--accent);
+    background: var(--surface-raised);
     background: color-mix(in srgb, var(--accent) 24%, var(--bg-deep));
 }
 
@@ -788,6 +821,8 @@ svg {
     position: relative;
     min-height: 760px;
     height: 92vh;
+    /* svh = 不带浏览器工具栏的小视口高度，移动端不会被地址栏顶掉底部内容 */
+    height: 92svh;
     max-height: 980px;
     overflow: hidden;
     background: var(--bg-deep);
@@ -926,7 +961,7 @@ svg {
 .button-primary {
     border-color: var(--accent);
     background: var(--accent);
-    color: #1a1918;
+    color: var(--on-accent);
 }
 
 .button-primary:hover {
@@ -936,6 +971,7 @@ svg {
 
 .button-quiet {
     background: rgba(15, 17, 16, 0.28);
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
 }
 
@@ -1149,7 +1185,6 @@ svg {
     border: 0;
     border-bottom: 1px solid var(--line-strong);
     border-radius: 0;
-    outline: 0;
     background: transparent;
     color: var(--text);
     font-family: var(--font-main);
@@ -1294,6 +1329,9 @@ svg {
 
 .post-row {
     position: relative;
+    /* 显式建立层叠上下文：让 ::before 的 z-index:-1 稳定停在自身背景之上、
+       内容之下，而不会依赖 .reveal 的 transform（那是隐式且易被改坏的） */
+    isolation: isolate;
     display: grid;
     grid-template-columns: 180px minmax(0, 1fr) 42px;
     gap: 36px;
@@ -1396,7 +1434,7 @@ svg {
 
 .post-row:hover .post-arrow {
     background: var(--accent);
-    color: #1a1918;
+    color: var(--on-accent);
     transform: rotate(-8deg);
 }
 
@@ -1443,6 +1481,10 @@ svg {
     transition: transform 300ms var(--ease);
 }
 
+/* 该行由 JS 加上 .reveal，而 .reveal.is-visible 也声明了 transform；
+   这里提高选择器权重，保证悬停/聚焦的横移不会被它按源序覆盖 */
+.timeline-preview-row.reveal.is-visible:hover,
+.timeline-preview-row.reveal.is-visible:focus-visible,
 .timeline-preview-row:hover,
 .timeline-preview-row:focus-visible {
     transform: translateX(8px);
@@ -1494,7 +1536,7 @@ svg {
 
 .timeline-preview-row:hover .timeline-preview-number {
     background: var(--accent);
-    color: #1a1918;
+    color: var(--on-accent);
     box-shadow: 0 0 0 1px var(--accent), 0 0 0 7px color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
@@ -1587,13 +1629,15 @@ svg {
     font-size: 11px;
 }
 
-blockquote {
+/* 限定在首页"关于"区域：文章正文里的 <blockquote> 由 article.css 单独排版，
+   否则会同时套上这里的上边框和阅读页的左竖线 */
+.about-copy blockquote {
     margin: 0;
     padding: 24px 0 0;
     border-top: 1px solid var(--line-strong);
 }
 
-blockquote p {
+.about-copy blockquote p {
     margin: 0;
     color: var(--quiet-accent);
     font-size: 21px;
@@ -1694,7 +1738,6 @@ body.is-resizing {
     padding: 13px 14px;
     border: 1px solid var(--line);
     border-radius: 4px;
-    outline: 0;
     background: var(--surface);
     color: var(--text);
     font-family: var(--font-main);
@@ -1920,7 +1963,7 @@ body.is-resizing {
     padding: 94px 0;
     border-top: 1px solid var(--line);
     background: var(--accent);
-    color: #24211f;
+    color: var(--on-accent);
 }
 
 .contact-layout {
@@ -1932,11 +1975,12 @@ body.is-resizing {
 
 .contact-layout .eyebrow {
     margin-bottom: 18px;
-    color: #4f342e;
+    /* 原先的深棕在浅色主题的深强调色上只有约 2:1，改用强调色前景色（约 5-6:1） */
+    color: var(--on-accent);
 }
 
 .contact-links {
-    border-top: 1px solid rgba(36, 33, 31, 0.34);
+    border-top: 1px solid var(--on-accent-line);
 }
 
 .contact-links a {
@@ -1944,14 +1988,14 @@ body.is-resizing {
     align-items: center;
     justify-content: space-between;
     min-height: 54px;
-    border-bottom: 1px solid rgba(36, 33, 31, 0.34);
+    border-bottom: 1px solid var(--on-accent-line);
     font-size: 17px;
     transition: padding 200ms var(--ease), background-color 180ms ease;
 }
 
 .contact-links a:hover {
     padding: 0 10px;
-    background: rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--on-accent) 14%, transparent);
 }
 
 .site-footer {
@@ -2040,6 +2084,15 @@ body.is-resizing {
     }
 }
 
+/* 两列最小值 320 + 420 + gap 在 761-843px 视口下会超出 .section-shell，
+   而 body 的 overflow-x: clip 会把右列直接裁掉，因此在 880px 就改为单列 */
+@media (max-width: 880px) {
+    .about-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 40px;
+    }
+}
+
 @media (max-width: 760px) {
     :root {
         --header-height: 64px;
@@ -2067,17 +2120,23 @@ body.is-resizing {
         padding: 10px 16px 18px;
         border-bottom: 1px solid var(--line);
         background: var(--header-bg);
+        -webkit-backdrop-filter: blur(18px);
         backdrop-filter: blur(18px);
         opacity: 0;
         pointer-events: none;
+        /* visibility:hidden 让收起状态下的链接退出键盘 Tab 序列；
+           只用 opacity:0 会让键盘用户 Tab 进一排看不见的链接 */
+        visibility: hidden;
         transform: translateY(-12px);
-        transition: opacity 180ms ease, transform 180ms ease;
+        transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
     }
 
     .nav-links.is-open {
         opacity: 1;
         pointer-events: auto;
+        visibility: visible;
         transform: translateY(0);
+        transition: opacity 180ms ease, transform 180ms ease, visibility 0s;
     }
 
     .nav-links a {
@@ -2135,6 +2194,7 @@ body.is-resizing {
     .hero {
         min-height: 680px;
         height: 88vh;
+        height: 88svh;
     }
 
     .hero-image {
@@ -2144,8 +2204,7 @@ body.is-resizing {
         mask-image: none;
     }
 
-    .hero-overlay,
-    :root[data-theme='light'] .hero-overlay {
+    .hero-overlay {
         background: linear-gradient(0deg, var(--bg-deep) 0%, rgba(15, 17, 16, 0.74) 52%, rgba(15, 17, 16, 0.18) 100%);
     }
 
