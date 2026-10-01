@@ -105,6 +105,13 @@ async function handle(request, env, url, cors) {
     return json({ error: 'Unauthorized' }, 401, cors);
   }
 
+  // ==================== 文章接口 ====================
+  // 这套接口目前没有对应的 D1 数据库（见 wrangler.toml 中的说明），绑定缺失时给出明确响应，
+  // 而不是让 env.ARTICLES_DB.prepare 抛错、被顶层兜底成 500
+  if (url.pathname.startsWith('/api/articles') && !env.ARTICLES_DB) {
+    return json({ error: '文章接口未配置数据库' }, 503, cors);
+  }
+
   // ==================== 文章搜索 ====================
   if (url.pathname === '/api/articles/search' && request.method === 'GET') {
     const q = url.searchParams.get('q') || '';
