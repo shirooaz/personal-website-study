@@ -50,11 +50,10 @@
 
 ### 6. 后端（`workers/guestbook/`）
 
-- **修复越权删除**：`DELETE /api/messages/:id` 原先**没有任何鉴权**，而 `GET /api/messages` 会把每条留言的 `id` 返回给所有访客——任何访客都能清空留言板。现在与文章接口一致，需要 `ADMIN_TOKEN`。
+- **修复越权删除**：`DELETE /api/messages/:id` 原先**没有任何鉴权**，而 `GET /api/messages` 会把每条留言的 `id` 返回给所有访客——任何访客都能清空留言板。现在需要 `Authorization: Bearer $ADMIN_TOKEN`。
 - `fetch` 外层补 `try/catch`：任何未捕获异常都返回带 CORS 头的 JSON 500，前端可以区分"服务端出错"和"断网"（原先返回 Cloudflare 错误页，不带 CORS 头）。
-- 搜索接口的 FTS → LIKE 回退补上错误处理，失败时返回 JSON 503 而不是二次抛错。
-- 留言昵称留空按"匿名用户"处理（与前端 `可不填` 的文案一致），不再直接 400；`schema.sql` 的 FTS5 分词器改为 `trigram`（默认 `unicode61` 会把连续汉字当成一个 token，中文子串搜不到）。
-- `wrangler.toml` 补注释说明：`database_id` 仍是占位符，`/api/articles*` 在替换前不可用，而前端也从未调用它——需要决定是补齐还是删除，避免与 `blog-data.js` 形成两份"文章真相"。
+- 留言昵称留空按"匿名用户"处理（与前端 `可不填` 的文案一致），不再直接 400。
+- **移除文章接口（`/api/articles*`）与 `schema.sql`**：这套 D1 接口前端从未调用，账号里也没有对应的数据库（`wrangler d1 list` 为空，线上一直是 404），占位符 `database_id` 还会让 `wrangler deploy` 直接失败（错误码 10021）。文章数据统一由 `blog-data.js` 维护，Worker 现在只服务留言板。
 - 已知限制（未改，已在代码注释中说明）：留言用 KV 单键"读-改-写"，并发提交可能丢一条，量大时应改为一留言一键或迁 D1；内存限流是近似值。
 
 ### 7. 资源体积
@@ -217,8 +216,7 @@ Cloudflare Pages 可直接部署本目录：
 - 构建命令：留空。
 - 构建输出目录：站点文件所在目录；若本目录就是仓库根目录，使用 `/`。
 - 自定义域名、留言 API 的 CORS 来源和 Worker 路由应保持一致。
-- Worker 侧改动需要重新部署：`cd workers/guestbook && wrangler deploy`，并用 `wrangler secret put ADMIN_TOKEN` 配置管理口令（未配置时所有写接口都会返回 401）。
-- 若要让中文全文搜索生效，需重建 FTS 索引：`wrangler d1 execute articles-db --file=./schema.sql`（已有旧索引时先 `DROP TABLE article_fts`）。
+- Worker 侧改动需要重新部署：`cd workers/guestbook && wrangler deploy`，并用 `wrangler secret put ADMIN_TOKEN` 配置管理口令（未配置时所有写接口都会返回 401）。可用 `GET /api/auth` 验证口令是否配置正确。
 - 注意本目录直接作为发布根时，`workers/` 源码、`tools/`、`README.md` 也会被公开访问，如不希望如此请调整发布目录。
 - 发布前检查首页、至少一篇文章、移动端导航、留言提交和 404 文章状态。
 
